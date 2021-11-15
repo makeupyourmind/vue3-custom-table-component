@@ -103,3 +103,16 @@ tr:nth-child(even) td {
   background-repeat: no-repeat;
   padding-right: 30px !important;
 }
+
+.pagination {
+  list-style-type: none;
+}
+
+.pagination-item {
+  display: inline-block;
+}
+
+.active {
+  background-color: #4AAE9B;
+  color: #ffffff;
+}

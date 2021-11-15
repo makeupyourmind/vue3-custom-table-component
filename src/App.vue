@@ -1,11 +1,12 @@
 <template>
   <VTable
-    :use-api-sorting="true"
+    :use-api-sorting="false"
     :is-loading="false"
     :headers="headers"
     :items="desserts"
     @handle-api-sorting="handleApiSorting"
-  />
+  >
+  </VTable>
 </template>
 <script>
 import VTable from './components/VTable';

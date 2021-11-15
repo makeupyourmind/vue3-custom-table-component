@@ -35,13 +35,24 @@
           </tr>
         </tbody>
       </table>
+      <div>
+        <slot name="pagination">
+          <Pagination
+            :total-pages="paginationOptions.totalPages"
+            :per-page="paginationOptions.perPage"
+            :current-page="currentPage"
+            @pagechanged="onPageChange"
+          />
+        </slot>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { computed, defineComponent, onMounted, reactive } from 'vue';
+import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
 import VLoader from './VLoader';
+import Pagination from './VPagination.vue';
 import useResizableTable from '../hooks/use-resizable-table';
 import {
   dynamicSortMultiple,
@@ -52,7 +63,7 @@ import { ASC, DESC } from '../constants';
 
 export default defineComponent({
   name: 'VTable',
-  components: { VLoader },
+  components: { VLoader, Pagination },
   props: {
     headers: {
       type: Array,
@@ -70,10 +81,23 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    paginationOptions: {
+      type: Object,
+      default: () => ({
+        totalPages: 1,
+        perPage: 10,
+      }),
+    },
+    isSlotMode: {
+      type: Boolean,
+      default: false,
+    },
   },
+  emits: ['handle-api-sorting'],
   setup(props, context) {
-    const initialPropsItems = reactive({ ...props.items });
+    const initialPropsItems = reactive([...props.items]);
     const sortableFields = reactive([]);
+    const currentPage = ref(1);
 
     onMounted(() => {
       useResizableTable();
@@ -123,13 +147,24 @@ export default defineComponent({
       return sortableFields[method]((sortableField) => sortableField.field === field);
     };
 
+    const sliceArrayForPagination = (array) => {
+      return array.slice(
+        Math.max(0, (currentPage.value - 1) * props.paginationOptions.perPage),
+        props.paginationOptions.perPage * currentPage.value
+      );
+    };
+
     const sortedData = computed(() => {
       return props.useApiSorting || !sortableFields.length
-        ? initialPropsItems
-        : [...props.items].sort(
+        ? sliceArrayForPagination([...initialPropsItems])
+        : sliceArrayForPagination([...props.items]).sort(
             dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields))
           );
     });
+
+    const onPageChange = (page) => {
+      currentPage.value = page;
+    };
 
     return {
       getTableRowValue,
@@ -138,6 +173,8 @@ export default defineComponent({
       getSortDirection,
       hasSortableIcon,
       getSortableNumber,
+      currentPage,
+      onPageChange,
     };
   },
 });
