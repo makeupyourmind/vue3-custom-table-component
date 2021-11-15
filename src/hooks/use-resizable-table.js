@@ -1,4 +1,8 @@
 export default function useResizableTable() {
+  const table = document.querySelector('#custom-table');
+  if (!table) return;
+  const thead = table.querySelector('thead');
+
   const min = 150;
   // The max (fr) values for grid-template-columns
   const columnTypeToRatioMap = {
@@ -7,8 +11,6 @@ export default function useResizableTable() {
   };
   columnTypeToRatioMap.numeric = 1;
 
-  const table = document.querySelector('#custom-table');
-  const thead = table.querySelector('thead');
   /*
     The following will soon be filled with column objects containing
     the header element and their size value for grid-template-columns 

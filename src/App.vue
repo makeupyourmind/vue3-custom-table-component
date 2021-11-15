@@ -6,6 +6,9 @@
     :items="desserts"
     @handle-api-sorting="handleApiSorting"
   >
+    <!--    <template #pagination>-->
+    <!--      <VPagination :total-pages="2" :per-page="2" :current-page="1" @page-changed="onPageChange" />-->
+    <!--    </template>-->
   </VTable>
 </template>
 <script>
@@ -65,6 +68,9 @@ export default {
   methods: {
     handleApiSorting(e) {
       console.log('handleApiSorting', e);
+    },
+    onPageChange(page) {
+      console.log('page changed', page);
     },
   },
 };

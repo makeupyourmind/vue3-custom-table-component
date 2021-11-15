@@ -1,16 +1,16 @@
 <template>
-  <ul class="pagination">
-    <li class="pagination-item">
+  <ul class="v-pagination">
+    <li class="v-pagination-item">
       <button type="button" :disabled="isInFirstPage" @click="onClickFirstPage">First</button>
     </li>
 
-    <li class="pagination-item">
+    <li class="v-pagination-item">
       <button type="button" :disabled="isInFirstPage" @click="onClickPreviousPage">Previous</button>
     </li>
 
     <!-- Visible Buttons Start -->
 
-    <li v-for="page in pages" :key="page.name" class="pagination-item">
+    <li v-for="page in pages" :key="page.name" class="v-pagination-item">
       <button
         type="button"
         :disabled="page.isDisabled"
@@ -23,11 +23,11 @@
 
     <!-- Visible Buttons End -->
 
-    <li class="pagination-item">
+    <li class="v-pagination-item">
       <button type="button" :disabled="isInLastPage" @click="onClickNextPage">Next</button>
     </li>
 
-    <li class="pagination-item">
+    <li class="v-pagination-item">
       <button type="button" :disabled="isInLastPage" @click="onClickLastPage">Last</button>
     </li>
   </ul>

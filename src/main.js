@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 import App from './App.vue';
 
-import './assets/styles.scss';
+import './assets/styles/app.scss';
 
 const iconsUsed = [faSortUp, faSortDown];
 library.add(...iconsUsed);

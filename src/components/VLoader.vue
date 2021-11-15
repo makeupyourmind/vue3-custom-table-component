@@ -14,12 +14,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$loader-main-color: #fff;
-$loader-color: #1867c0;
-$loader-back-color: #86b1e1;
-$loader-time: 3s;
-$loader-size: 4px;
-
 .v-loader-progress {
   background-color: $loader-main-color;
   overflow: hidden;

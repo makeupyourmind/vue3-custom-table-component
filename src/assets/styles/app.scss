@@ -1,3 +1,5 @@
+@import "./variables";
+
 * {
   box-sizing: border-box;
 }
@@ -17,12 +19,6 @@ table {
   border-collapse: collapse;
   min-width: 100%;
   grid-template-columns: auto;
-  //grid-template-columns:
-  //  minmax(150px, 1fr)
-  //  minmax(150px, 1.67fr)
-  //  minmax(150px, 1.67fr)
-  //  minmax(150px, 1.67fr);
-  //grid-template-columns: repeat(auto-fit, 1fr);
 }
 
 thead,
@@ -104,15 +100,15 @@ tr:nth-child(even) td {
   padding-right: 30px !important;
 }
 
-.pagination {
+.v-pagination {
   list-style-type: none;
-}
 
-.pagination-item {
-  display: inline-block;
-}
+  &-item {
+    display: inline-block;
+  }
 
-.active {
-  background-color: #4AAE9B;
-  color: #ffffff;
+  .active {
+    background-color: #4AAE9B;
+    color: #ffffff;
+  }
 }
