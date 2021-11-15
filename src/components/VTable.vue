@@ -37,11 +37,11 @@
       </table>
       <div>
         <slot name="pagination">
-          <Pagination
+          <VPagination
             :total-pages="paginationOptions.totalPages"
             :per-page="paginationOptions.perPage"
             :current-page="currentPage"
-            @pagechanged="onPageChange"
+            @page-changed="onPageChange"
           />
         </slot>
       </div>
@@ -52,7 +52,7 @@
 <script>
 import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
 import VLoader from './VLoader';
-import Pagination from './VPagination.vue';
+import VPagination from './VPagination.vue';
 import useResizableTable from '../hooks/use-resizable-table';
 import {
   dynamicSortMultiple,
@@ -63,7 +63,7 @@ import { ASC, DESC } from '../constants';
 
 export default defineComponent({
   name: 'VTable',
-  components: { VLoader, Pagination },
+  components: { VLoader, VPagination },
   props: {
     headers: {
       type: Array,
@@ -84,6 +84,7 @@ export default defineComponent({
     paginationOptions: {
       type: Object,
       default: () => ({
+        currentPage: 0,
         totalPages: 1,
         perPage: 10,
       }),
@@ -147,10 +148,18 @@ export default defineComponent({
       return sortableFields[method]((sortableField) => sortableField.field === field);
     };
 
+    const onPageChange = (page) => {
+      currentPage.value = page;
+    };
+
     const sliceArrayForPagination = (array) => {
       return array.slice(
-        Math.max(0, (currentPage.value - 1) * props.paginationOptions.perPage),
-        props.paginationOptions.perPage * currentPage.value
+        Math.max(
+          0,
+          ((props.paginationOptions.currentPage || currentPage.value) - 1) *
+            props.paginationOptions.perPage
+        ),
+        props.paginationOptions.perPage * (props.paginationOptions.currentPage || currentPage.value)
       );
     };
 
@@ -161,10 +170,6 @@ export default defineComponent({
             dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields))
           );
     });
-
-    const onPageChange = (page) => {
-      currentPage.value = page;
-    };
 
     return {
       getTableRowValue,
