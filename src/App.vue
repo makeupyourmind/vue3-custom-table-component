@@ -4,7 +4,11 @@
     :is-loading="false"
     :headers="headers"
     :items="desserts"
-    :is-pagination-mode-enabled="false"
+    :is-pagination-mode-enabled="true"
+    :pagination-options="{
+      totalPages: 4,
+      perPage: 10,
+    }"
     @handle-api-sorting="handleApiSorting"
   >
     <!--    <template #pagination>-->

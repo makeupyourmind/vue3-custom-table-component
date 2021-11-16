@@ -91,7 +91,7 @@ export default {
 
       // When on the last page
       if (props.currentPage === props.totalPages) {
-        return props.totalPages - props.maxVisibleButtons;
+        return props.totalPages - (props.maxVisibleButtons - 1);
       }
 
       // When in between
