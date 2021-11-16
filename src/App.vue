@@ -1,9 +1,10 @@
 <template>
   <VTable
-    :use-api-sorting="false"
+    :use-api-sorting="true"
     :is-loading="false"
     :headers="headers"
     :items="desserts"
+    :is-pagination-enabled="false"
     @handle-api-sorting="handleApiSorting"
   >
     <!--    <template #pagination>-->
@@ -24,12 +25,14 @@ export default {
         value: 'name',
         sortable: true,
         resizable: true,
+        width: '350px',
       },
       {
         text: 'Calories',
         value: 'calories',
         sortable: true,
         resizable: true,
+        width: '360px',
       },
       {
         text: 'Fat (g)',

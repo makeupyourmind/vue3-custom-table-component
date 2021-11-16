@@ -22,19 +22,15 @@ export default {
       const columns = [];
       let headerBeingResized;
 
-      /**
-       * Calculate missing styles to not break layout
-       *
-       * @param {NodeList} parent
-       * @param {Array} columns
-       * @return {string}
-       */
-      const calculateMissingStyles = (parent, columns) => {
-        const diff = parent.length - columns.length;
-        return Array.from({ length: diff })
-          .map(() => 'auto')
-          .join(' ');
-      };
+      const updateColumnSizes = (columns) => {
+        thead.style.gridTemplateColumns = columns.map(({ size }) => size).join(' ');
+
+        const tbodyTrs = el.querySelectorAll('tbody tr');
+
+        tbodyTrs.forEach((tr) => {
+          tr.style.gridTemplateColumns = columns.map(({ size }) => size).join(' ');
+        });
+      }
 
       // The next three functions are mouse event callbacks
 
@@ -62,20 +58,7 @@ export default {
           Update the column sizes
           Reminder: grid-template-columns sets the width for all columns in one value
         */
-          thead.style.gridTemplateColumns = columns.map(({ size }) => size).join(' ');
-
-          if (ths.length !== columns.length) {
-            thead.style.gridTemplateColumns += ` ${calculateMissingStyles(ths, columns)}`;
-          }
-
-          const tbodyTrs = el.querySelectorAll('tbody tr');
-
-          tbodyTrs.forEach((tr) => {
-            tr.style.gridTemplateColumns = columns.map(({ size }) => size).join(' ');
-            if (tbodyTrs.length !== columns.length) {
-              tr.style.gridTemplateColumns += ` ${calculateMissingStyles(tbodyTrs, columns)}`;
-            }
-          });
+          updateColumnSizes(columns)
         });
       };
 
@@ -99,14 +82,25 @@ export default {
 
       // Let's populate that columns array and add listeners to the resize handles
       ths.forEach((header) => {
-        const max = columnTypeToRatioMap[header.dataset.type] + 'fr';
+        const styles = header.style
+        const isWidthStyle = styles[0] === 'width'
+        const max = (columnTypeToRatioMap[header.dataset.type] || 1) + 'fr';
         columns.push({
           header,
           // The initial size value for grid-template-columns:
-          size: `minmax(${min}px, ${max})`,
+          size: isWidthStyle ? `minmax(${styles[styles[0]]}, ${max})` : `minmax(${min}px, ${max})`,
         });
-        header.querySelector('.resize-handle').addEventListener('mousedown', initResize);
+        if (isWidthStyle) {
+          styles.width = 'auto'
+        }
+        const headerHasResizeHandler = header.querySelector('.resize-handle');
+
+        if (headerHasResizeHandler) {
+          headerHasResizeHandler?.addEventListener('mousedown', initResize);
+        }
       });
+
+      updateColumnSizes(columns)
     });
   },
 };

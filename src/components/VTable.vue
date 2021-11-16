@@ -13,6 +13,7 @@
               :class="{
                 sortable: header.sortable,
               }"
+              :style="{width: header.width}"
               @click="header.sortable ? doSort(header.value) : false"
             >
               <span>{{ header.text }}</span>
@@ -35,7 +36,7 @@
           </tr>
         </tbody>
       </table>
-      <div>
+      <div v-if="isPaginationEnabled">
         <slot name="pagination">
           <VPagination
             :total-pages="paginationOptions.totalPages"
@@ -83,19 +84,17 @@ export default defineComponent({
     paginationOptions: {
       type: Object,
       default: () => ({
-        currentPage: 0,
         totalPages: 1,
         perPage: 10,
       }),
     },
-    isSlotMode: {
+    isPaginationEnabled: {
       type: Boolean,
       default: false,
     },
   },
   emits: ['handle-api-sorting'],
   setup(props, context) {
-    const initialPropsItems = reactive([...props.items]);
     const sortableFields = reactive([]);
     const currentPage = ref(1);
 
@@ -148,22 +147,26 @@ export default defineComponent({
     };
 
     const sliceArrayForPagination = (array) => {
-      return array.slice(
+      return [...array].slice(
         Math.max(
           0,
-          ((props.paginationOptions.currentPage || currentPage.value) - 1) *
+          (currentPage.value - 1) *
             props.paginationOptions.perPage
         ),
-        props.paginationOptions.perPage * (props.paginationOptions.currentPage || currentPage.value)
+        props.paginationOptions.perPage * currentPage.value
       );
     };
 
     const sortedData = computed(() => {
-      return props.useApiSorting || !sortableFields.length
-        ? sliceArrayForPagination([...initialPropsItems])
-        : sliceArrayForPagination([...props.items]).sort(
+      if (props.useApiSorting) {
+        return props.items;
+      }
+
+      return props.isPaginationEnabled ? sliceArrayForPagination(props.items).sort(
             dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields))
-          );
+          ) : [...props.items].sort(
+          dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields))
+      ) ;
     });
 
     return {
