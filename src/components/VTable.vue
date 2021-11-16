@@ -7,16 +7,14 @@
       <table v-columns-resizable class="v-table">
         <thead>
           <tr>
-            <th
-              v-for="(header, idx) in headers"
-              :key="idx"
-              :class="{
-                sortable: header.sortable,
-              }"
-              :style="{ width: header.width }"
-              @click="header.sortable ? doSort(header.value) : false"
-            >
-              <span>{{ header.text }}</span>
+            <th v-for="(header, idx) in headers" :key="idx" :style="{ width: header.width }">
+              <span
+                :class="{
+                  'v-table--sortable': header.sortable,
+                }"
+                @click="header.sortable ? doSort(header.value) : false"
+                >{{ header.text }}</span
+              >
               <FontAwesomeIcon
                 v-if="header.sortable && hasSortableIcon(header.value)"
                 :icon="getSortDirection(header.value)"
