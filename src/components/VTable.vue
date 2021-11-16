@@ -82,8 +82,14 @@ export default defineComponent({
     paginationOptions: {
       type: Object,
       default: () => ({
-        totalPages: 1,
-        perPage: 10,
+        totalPages: {
+          type: Number,
+          default: 1,
+        },
+        perPage: {
+          type: Number,
+          default: 10,
+        },
       }),
     },
     // enable pagination slot

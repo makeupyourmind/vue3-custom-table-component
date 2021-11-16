@@ -1,19 +1,32 @@
 <template>
   <ul class="v-pagination">
-    <li class="v-pagination-item">
-      <button type="button" :disabled="isInFirstPage" @click="onClickFirstPage">First</button>
+    <li
+      class="v-pagination__btn"
+      :class="{
+        'v-pagination__btn--disabled': isInFirstPage,
+      }"
+      v-on="!isInFirstPage ? { click: onClickFirstPage } : {}"
+    >
+      <FontAwesomeIcon class="v-pagination__btn--icon" icon="angle-double-left" />
     </li>
 
-    <li class="v-pagination-item">
-      <button type="button" :disabled="isInFirstPage" @click="onClickPreviousPage">Previous</button>
+    <li
+      class="v-pagination__btn"
+      :class="{
+        'v-pagination__btn--disabled': isInFirstPage,
+      }"
+      v-on="!isInFirstPage ? { click: onClickPreviousPage } : {}"
+    >
+      <FontAwesomeIcon class="v-pagination__btn--icon" icon="chevron-left" />
     </li>
 
     <!-- Visible Buttons Start -->
 
-    <li v-for="page in pages" :key="page.name" class="v-pagination-item">
+    <li v-for="page in pages" :key="page.name">
       <button
         type="button"
         :disabled="page.isDisabled"
+        class="v-pagination__numbers"
         :class="{ active: isPageActive(page.name) }"
         @click="onClickPage(page.name)"
       >
@@ -23,12 +36,24 @@
 
     <!-- Visible Buttons End -->
 
-    <li class="v-pagination-item">
-      <button type="button" :disabled="isInLastPage" @click="onClickNextPage">Next</button>
+    <li
+      class="v-pagination__btn"
+      :class="{
+        'v-pagination__btn--disabled': isInLastPage,
+      }"
+      v-on="!isInLastPage ? { click: onClickNextPage } : {}"
+    >
+      <FontAwesomeIcon class="v-pagination__btn--icon" icon="chevron-right" />
     </li>
 
-    <li class="v-pagination-item">
-      <button type="button" :disabled="isInLastPage" @click="onClickLastPage">Last</button>
+    <li
+      class="v-pagination__btn"
+      :class="{
+        'v-pagination__btn--disabled': isInLastPage,
+      }"
+      v-on="!isInLastPage ? { click: onClickLastPage } : {}"
+    >
+      <FontAwesomeIcon class="v-pagination__btn--icon" icon="angle-double-right" />
     </li>
   </ul>
 </template>
@@ -77,8 +102,8 @@ export default {
       const range = [];
 
       for (
-        let i = startPage;
-        i <= Math.min(startPage + props.maxVisibleButtons - 1, props.totalPages);
+        let i = startPage.value;
+        i <= Math.min(startPage.value + props.maxVisibleButtons - 1, props.totalPages);
         i++
       ) {
         range.push({
