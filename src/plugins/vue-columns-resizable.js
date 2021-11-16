@@ -43,7 +43,8 @@ export default {
 
           // Update the column object with the new size value
           const column = columns.find(({ header }) => header === headerBeingResized);
-          column.size = Math.max(min, width) + 'px'; // Enforce our minimum
+          const minSizeOfColumn = column.originalMinSize ? parseInt(column.originalMinSize) : min;
+          column.size = Math.max(minSizeOfColumn, width) + 'px'; // Enforce our minimum
 
           // For the other headers which don't have a set width, fix it to their computed width
           columns.forEach((column) => {
@@ -88,6 +89,7 @@ export default {
           header,
           // The initial size value for grid-template-columns:
           size: isWidthStyle ? `minmax(${styles[styles[0]]}, ${max})` : `minmax(${min}px, ${max})`,
+          originalMinSize: isWidthStyle ? styles[styles[0]] : undefined,
         });
         if (isWidthStyle) {
           styles.width = 'auto';
