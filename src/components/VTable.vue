@@ -13,7 +13,7 @@
               :class="{
                 sortable: header.sortable,
               }"
-              :style="{width: header.width}"
+              :style="{ width: header.width }"
               @click="header.sortable ? doSort(header.value) : false"
             >
               <span>{{ header.text }}</span>
@@ -36,7 +36,7 @@
           </tr>
         </tbody>
       </table>
-      <div v-if="isPaginationEnabled">
+      <div v-if="isPaginationModeEnabled">
         <slot name="pagination">
           <VPagination
             :total-pages="paginationOptions.totalPages"
@@ -88,7 +88,8 @@ export default defineComponent({
         perPage: 10,
       }),
     },
-    isPaginationEnabled: {
+    // enable pagination slot
+    isPaginationModeEnabled: {
       type: Boolean,
       default: false,
     },
@@ -148,25 +149,33 @@ export default defineComponent({
 
     const sliceArrayForPagination = (array) => {
       return [...array].slice(
-        Math.max(
-          0,
-          (currentPage.value - 1) *
-            props.paginationOptions.perPage
-        ),
+        Math.max(0, (currentPage.value - 1) * props.paginationOptions.perPage),
         props.paginationOptions.perPage * currentPage.value
       );
     };
 
     const sortedData = computed(() => {
-      if (props.useApiSorting) {
-        return props.items;
+      const { useApiSorting, isPaginationModeEnabled, items } = props;
+      // check if user wants to use custom pagination
+      const useCustomPagination = !!context.slots.pagination;
+
+      if (
+        (isPaginationModeEnabled && useCustomPagination) ||
+        (useApiSorting && isPaginationModeEnabled && useCustomPagination)
+      ) {
+        return items;
       }
 
-      return props.isPaginationEnabled ? sliceArrayForPagination(props.items).sort(
-            dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields))
-          ) : [...props.items].sort(
+      if (
+        (isPaginationModeEnabled && !useCustomPagination) ||
+        (useApiSorting && isPaginationModeEnabled && !useCustomPagination)
+      ) {
+        return sliceArrayForPagination(items).sort(
           dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields))
-      ) ;
+        );
+      }
+
+      return items;
     });
 
     return {

@@ -10,7 +10,6 @@ export default {
       const min = 150;
       // The max (fr) values for grid-template-columns
       const columnTypeToRatioMap = {
-        'numeric': 1,
         'text-short': 1.67,
         'text-long': 3.33,
       };
@@ -30,7 +29,7 @@ export default {
         tbodyTrs.forEach((tr) => {
           tr.style.gridTemplateColumns = columns.map(({ size }) => size).join(' ');
         });
-      }
+      };
 
       // The next three functions are mouse event callbacks
 
@@ -58,7 +57,7 @@ export default {
           Update the column sizes
           Reminder: grid-template-columns sets the width for all columns in one value
         */
-          updateColumnSizes(columns)
+          updateColumnSizes(columns);
         });
       };
 
@@ -82,8 +81,8 @@ export default {
 
       // Let's populate that columns array and add listeners to the resize handles
       ths.forEach((header) => {
-        const styles = header.style
-        const isWidthStyle = styles[0] === 'width'
+        const styles = header.style;
+        const isWidthStyle = styles[0] === 'width';
         const max = (columnTypeToRatioMap[header.dataset.type] || 1) + 'fr';
         columns.push({
           header,
@@ -91,7 +90,7 @@ export default {
           size: isWidthStyle ? `minmax(${styles[styles[0]]}, ${max})` : `minmax(${min}px, ${max})`,
         });
         if (isWidthStyle) {
-          styles.width = 'auto'
+          styles.width = 'auto';
         }
         const headerHasResizeHandler = header.querySelector('.resize-handle');
 
@@ -100,7 +99,7 @@ export default {
         }
       });
 
-      updateColumnSizes(columns)
+      updateColumnSizes(columns);
     });
   },
 };

@@ -4,7 +4,7 @@
     :is-loading="false"
     :headers="headers"
     :items="desserts"
-    :is-pagination-enabled="false"
+    :is-pagination-mode-enabled="false"
     @handle-api-sorting="handleApiSorting"
   >
     <!--    <template #pagination>-->
