@@ -23,11 +23,13 @@ export default {
         text: 'Dessert (100g serving)',
         value: 'name',
         sortable: true,
+        resizable: true,
       },
       {
         text: 'Calories',
         value: 'calories',
         sortable: true,
+        resizable: true,
       },
       {
         text: 'Fat (g)',

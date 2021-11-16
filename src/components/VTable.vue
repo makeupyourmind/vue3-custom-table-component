@@ -4,7 +4,7 @@
       <VLoader />
     </div>
     <div v-else>
-      <table id="custom-table">
+      <table id="custom-table" v-columns-resizable>
         <thead>
           <tr>
             <th
@@ -23,7 +23,7 @@
               <span v-if="hasSortableIcon(header.value)">{{
                 getSortableNumber(header.value) + 1
               }}</span>
-              <span class="resize-handle"></span>
+              <span v-if="header.resizable" class="resize-handle"></span>
             </th>
           </tr>
         </thead>
@@ -50,10 +50,9 @@
 </template>
 
 <script>
-import { computed, defineComponent, onMounted, reactive, ref } from 'vue';
+import { computed, defineComponent, reactive, ref } from 'vue';
 import VLoader from './VLoader';
 import VPagination from './VPagination.vue';
-import useResizableTable from '../hooks/use-resizable-table';
 import {
   dynamicSortMultiple,
   transformSortableFieldsOrderToSqlFormat,
@@ -99,10 +98,6 @@ export default defineComponent({
     const initialPropsItems = reactive([...props.items]);
     const sortableFields = reactive([]);
     const currentPage = ref(1);
-
-    onMounted(() => {
-      useResizableTable();
-    });
 
     const getTableRowValue = (item, key) => {
       const header = props.headers.find((header) => header.value === key);
