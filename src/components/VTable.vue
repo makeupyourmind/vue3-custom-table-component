@@ -4,7 +4,7 @@
       <VLoader />
     </div>
     <div v-else>
-      <table id="custom-table" v-columns-resizable>
+      <table v-columns-resizable class="v-table">
         <thead>
           <tr>
             <th
