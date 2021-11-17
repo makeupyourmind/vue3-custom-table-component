@@ -82,17 +82,19 @@ export default {
 
       // Let's populate that columns array and add listeners to the resize handles
       ths.forEach((header) => {
-        const styles = header.style;
-        const isWidthStyle = styles[0] === 'width';
+        const headerStyles = header.style;
+        const isWidthStyle = headerStyles[0] === 'width';
         const max = (columnTypeToRatioMap[header.dataset.type] || 1) + 'fr';
         columns.push({
           header,
           // The initial size value for grid-template-columns:
-          size: isWidthStyle ? `minmax(${styles[styles[0]]}, ${max})` : `minmax(${min}px, ${max})`,
-          originalMinSize: isWidthStyle ? styles[styles[0]] : undefined,
+          size: isWidthStyle
+            ? `minmax(${headerStyles[headerStyles[0]]}, ${max})`
+            : `minmax(${min}px, ${max})`,
+          originalMinSize: isWidthStyle ? headerStyles[headerStyles[0]] : undefined,
         });
         if (isWidthStyle) {
-          styles.width = 'auto';
+          headerStyles.width = 'auto';
         }
         const headerHasResizeHandler = header.querySelector('.resize-handle');
 
@@ -100,8 +102,6 @@ export default {
           headerHasResizeHandler?.addEventListener('mousedown', initResize);
         }
       });
-
-      updateColumnSizes(columns);
     });
   },
 };

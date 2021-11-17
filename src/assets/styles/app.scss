@@ -90,10 +90,12 @@ body {
     background: #f8f6ff;
   }
 
-  &--sortable {
-    cursor: pointer;
-    display: block;
-    margin-right: 30px;
+  &__header {
+    &--sortable {
+      cursor: pointer;
+      display: flex;
+      margin-right: 30px;
+    }
   }
 }
 

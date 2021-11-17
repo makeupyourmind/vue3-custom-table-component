@@ -7,29 +7,37 @@
       <table v-columns-resizable class="v-table">
         <thead>
           <tr>
-            <th v-for="(header, idx) in headers" :key="idx" :style="{ width: header.width }">
+            <th
+              v-for="(header, idx) in headers"
+              :key="idx"
+              class="v-table__header"
+              :style="{ width: header.width }"
+            >
               <span
                 :class="{
-                  'v-table--sortable': header.sortable,
+                  'v-table__header--sortable': header.sortable,
                 }"
                 @click="header.sortable ? doSort(header.value) : false"
-                >{{ header.text }}</span
               >
-              <FontAwesomeIcon
-                v-if="header.sortable && hasSortableIcon(header.value)"
-                :icon="getSortDirection(header.value)"
-              />
-              <span v-if="hasSortableIcon(header.value)">{{
-                getSortableNumber(header.value) + 1
-              }}</span>
+                <span>
+                  {{ header.text }}
+                </span>
+                <FontAwesomeIcon
+                  v-if="header.sortable && hasSortableIcon(header.value)"
+                  :icon="getSortDirection(header.value)"
+                />
+                <span v-if="hasSortableIcon(header.value)">{{
+                  getSortableNumber(header.value) + 1
+                }}</span>
+              </span>
               <span v-if="header.resizable" class="resize-handle"></span>
             </th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(item, idx) in sortedData" :key="idx">
-            <td v-for="(key, keyIdx) in Object.keys(item)" :key="keyIdx">
-              {{ getTableRowValue(item, key) }}
+            <td v-for="(itemKey, keyIdx) in Object.keys(item)" :key="keyIdx">
+              {{ getTableRowValue(item, itemKey) }}
             </td>
           </tr>
         </tbody>
@@ -112,11 +120,9 @@ export default defineComponent({
       const indexOfSearchableField = sortableFieldsManipulations('findIndex', field);
       if (indexOfSearchableField !== -1) {
         const sortableField = sortableFields[indexOfSearchableField];
-        if (sortableField.order === ASC) {
-          sortableField.order = DESC;
-        } else {
-          sortableFields.splice(indexOfSearchableField, 1);
-        }
+        sortableField.order === ASC
+          ? (sortableField.order = DESC)
+          : sortableFields.splice(indexOfSearchableField, 1);
       } else {
         sortableFields.push({
           field,
