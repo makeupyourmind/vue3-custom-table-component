@@ -9,7 +9,6 @@
       totalPages: 4,
       perPage: 10,
     }"
-    @handle-api-sorting="handleApiSorting"
   >
     <!--    <template #pagination>-->
     <!--      <VPagination :total-pages="2" :per-page="2" :current-page="1" @page-changed="onPageChange" />-->
@@ -75,12 +74,12 @@ export default {
     ],
   }),
   methods: {
-    handleApiSorting(e) {
-      console.log('handleApiSorting', e);
-    },
-    onPageChange(page) {
-      console.log('page changed', page);
-    },
+    // handleApiSorting(e) {
+    //   console.log('handleApiSorting', e);
+    // },
+    // onPageChange(page) {
+    //   console.log('page changed', page);
+    // },
   },
 };
 </script>

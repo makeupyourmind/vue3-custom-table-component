@@ -1,7 +1,16 @@
 {
-  "name": "my-vue3-table-component",
-  "version": "0.1.0",
-  "private": true,
+  "name": "vue3-table-component-1",
+  "version": "0.0.51",
+  "private": false,
+  "main": "dist/vue3-table-component-1.common.js",
+  "keywords": [
+    "vue",
+    "vue3",
+    "table"
+  ],
+  "files": [
+    "./dist/*"
+  ],
   "author": {
     "email": "nikitosnov@gmail.com",
     "name": "Nikita (makeupyourmind)"
@@ -9,7 +18,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "build-library": "vue-cli-service build --target lib src/index.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.36",

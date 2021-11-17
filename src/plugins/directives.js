@@ -64,7 +64,7 @@ export default {
 
       // Clean up event listeners, classes, etc.
       const onMouseUp = () => {
-        console.log('onMouseUp');
+        // console.log('onMouseUp');
         window.removeEventListener('mousemove', onMouseMove);
         window.removeEventListener('mouseup', onMouseUp);
         headerBeingResized.classList.remove('header--being-resized');
@@ -81,16 +81,22 @@ export default {
       };
 
       // Let's populate that columns array and add listeners to the resize handles
-      ths.forEach((header) => {
+      ths.forEach((header, idx) => {
         const headerStyles = header.style;
         const isWidthStyle = headerStyles[0] === 'width';
         const max = (columnTypeToRatioMap[header.dataset.type] || 1) + 'fr';
+
+        const gridTemplateColumnsStyle = thead.style['grid-template-columns'];
+        let minSize = headerStyles[headerStyles[0]];
+        if (gridTemplateColumnsStyle) {
+          const arr = gridTemplateColumnsStyle.split(' ');
+          minSize = arr[idx];
+        }
+
         columns.push({
           header,
           // The initial size value for grid-template-columns:
-          size: isWidthStyle
-            ? `minmax(${headerStyles[headerStyles[0]]}, ${max})`
-            : `minmax(${min}px, ${max})`,
+          size: isWidthStyle ? `minmax(${minSize}, ${max})` : `minmax(${min}px, ${max})`,
           originalMinSize: isWidthStyle ? headerStyles[headerStyles[0]] : undefined,
         });
         if (isWidthStyle) {
@@ -102,6 +108,8 @@ export default {
           headerHasResizeHandler?.addEventListener('mousedown', initResize);
         }
       });
+      // To apply with style prop if is passed
+      updateColumnSizes(columns);
     });
   },
 };
