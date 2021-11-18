@@ -1,5 +1,5 @@
 <template>
-  <FontAwesomeIcon :icon="icon" />
+  <FontAwesomeIcon :icon="[namespace, icon]" />
 </template>
 
 <script>
@@ -25,7 +25,7 @@ library.add(
 );
 
 export default defineComponent({
-  name: 'VFontAwesome',
+  name: 'VIcon',
   components: { FontAwesomeIcon },
   props: {
     namespace: {

@@ -7,7 +7,7 @@
       }"
       v-on="!isInFirstPage ? { click: onClickFirstPage } : {}"
     >
-      <FontAwesomeIcon class="v-pagination__btn--icon" icon="angle-double-left" />
+      <VIcon class="v-pagination__btn--icon" icon="angle-double-left" />
     </li>
 
     <li
@@ -17,7 +17,7 @@
       }"
       v-on="!isInFirstPage ? { click: onClickPreviousPage } : {}"
     >
-      <FontAwesomeIcon class="v-pagination__btn--icon" icon="chevron-left" />
+      <VIcon class="v-pagination__btn--icon" icon="chevron-left" />
     </li>
 
     <!-- Visible Buttons Start -->
@@ -43,7 +43,7 @@
       }"
       v-on="!isInLastPage ? { click: onClickNextPage } : {}"
     >
-      <FontAwesomeIcon class="v-pagination__btn--icon" icon="chevron-right" />
+      <VIcon class="v-pagination__btn--icon" icon="chevron-right" />
     </li>
 
     <li
@@ -53,16 +53,18 @@
       }"
       v-on="!isInLastPage ? { click: onClickLastPage } : {}"
     >
-      <FontAwesomeIcon class="v-pagination__btn--icon" icon="angle-double-right" />
+      <VIcon class="v-pagination__btn--icon" icon="angle-double-right" />
     </li>
   </ul>
 </template>
 
 <script>
 import { computed } from 'vue';
+import VIcon from './VIcon';
 
 export default {
   name: 'VPagination',
+  components: { VIcon },
   props: {
     maxVisibleButtons: {
       type: Number,
@@ -162,3 +164,55 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.v-pagination {
+  list-style-type: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem;
+  border-radius: 0.6rem;
+  background: #ffffff;
+
+  &__numbers,
+  &__btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.4rem;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+
+  &__numbers {
+    width: 1.625rem;
+    height: 1.625rem;
+    border-radius: 0.4rem;
+    background: transparent;
+    outline: none;
+    border: none;
+
+    &:hover {
+      color: #23adad;
+    }
+
+    &.active {
+      color: #ffffff;
+      background: #23adad;
+      font-weight: 600;
+      border: 1px solid #23adad;
+    }
+  }
+
+  &__btn {
+    color: #23adade1;
+
+    &--disabled {
+      cursor: not-allowed;
+      color: #423e3e;
+      opacity: 0.7;
+    }
+  }
+}
+</style>

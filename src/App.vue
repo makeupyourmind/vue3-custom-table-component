@@ -1,15 +1,5 @@
 <template>
-  <VTable
-    :use-api-sorting="true"
-    :is-loading="false"
-    :headers="headers"
-    :items="desserts"
-    :is-pagination-mode-enabled="true"
-    :pagination-options="{
-      totalPages: 4,
-      perPage: 10,
-    }"
-  >
+  <VTable :headers="headers" :items="desserts" :is-pagination-mode-enabled="false">
     <!--    <template #pagination>-->
     <!--      <VPagination :total-pages="2" :per-page="2" :current-page="1" @page-changed="onPageChange" />-->
     <!--    </template>-->
@@ -83,3 +73,20 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: BlinkMacSystemFont, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+}
+</style>

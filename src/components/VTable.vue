@@ -22,7 +22,7 @@
                 <span>
                   {{ header.text }}
                 </span>
-                <FontAwesomeIcon
+                <VIcon
                   v-if="header.sortable && hasSortableIcon(header.value)"
                   :icon="getSortDirection(header.value)"
                 />
@@ -58,18 +58,23 @@
 
 <script>
 import { computed, defineComponent, reactive, ref } from 'vue';
-import VLoader from './VLoader';
-import VPagination from './VPagination.vue';
 import {
   dynamicSortMultiple,
   transformSortableFieldsOrderToSqlFormat,
   transformToFieldsWithSortingSign,
 } from '../utils/utils';
 import { ASC, DESC } from '../constants';
+import { VueColumnsResizable } from '../plugins/directives';
+import VLoader from './VLoader';
+import VPagination from './VPagination.vue';
+import VIcon from './VIcon';
 
 export default defineComponent({
   name: 'VTable',
-  components: { VLoader, VPagination },
+  components: { VLoader, VPagination, VIcon },
+  directives: {
+    'columns-resizable': VueColumnsResizable,
+  },
   props: {
     headers: {
       type: Array,
@@ -90,14 +95,8 @@ export default defineComponent({
     paginationOptions: {
       type: Object,
       default: () => ({
-        totalPages: {
-          type: Number,
-          default: 1,
-        },
-        perPage: {
-          type: Number,
-          default: 10,
-        },
+        totalPages: 1,
+        perPage: 10,
       }),
     },
     // enable pagination slot
@@ -185,7 +184,7 @@ export default defineComponent({
         );
       }
 
-      return items;
+      return items.sort(dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields)));
     });
 
     return {
@@ -201,3 +200,93 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.v-table {
+  display: grid;
+  border-collapse: collapse;
+  min-width: 100%;
+  grid-template-columns: auto;
+  text-align: initial;
+
+  thead,
+  tbody,
+  tr {
+    display: contents;
+  }
+
+  thead {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  tbody {
+    tr {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+  }
+
+  th,
+  td {
+    padding: 15px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  th {
+    top: 0;
+    background: #6c7ae0;
+    text-align: left;
+    font-weight: normal;
+    font-size: 1.1rem;
+    color: white;
+    position: relative;
+  }
+
+  th:last-child {
+    border: 0;
+  }
+
+  .resize-handle {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: black;
+    opacity: 0;
+    width: 3px;
+    cursor: col-resize;
+  }
+
+  .resize-handle:hover,
+    /* The following selector is needed so the handle is visible during resize even if the mouse isn't over the handle anymore */
+  .header--being-resized .resize-handle {
+    opacity: 0.5;
+  }
+
+  th:hover .resize-handle {
+    opacity: 0.3;
+  }
+
+  td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #808080;
+  }
+
+  tr:nth-child(even) td {
+    background: #f8f6ff;
+  }
+
+  &__header {
+    &--sortable {
+      cursor: pointer;
+      display: flex;
+      margin-right: 30px;
+    }
+  }
+}
+</style>
