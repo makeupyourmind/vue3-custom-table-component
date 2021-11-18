@@ -1,8 +1,8 @@
 {
-  "name": "vue3-table-component-1",
-  "version": "0.0.51",
+  "name": "@makeupyourmind/vue3-table-component",
+  "version": "0.0.1",
   "private": false,
-  "main": "dist/vue3-table-component-1.common.js",
+  "main": "dist/vue3-table-component.common.js",
   "license": "MIT",
   "author": {
     "email": "nikitosnov@gmail.com",
@@ -35,11 +35,11 @@
     "vue": "^3.0.0"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.16.3",
     "@vue/cli-plugin-babel": "~4.5.0",
     "@vue/cli-plugin-eslint": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
-    "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.2",
@@ -48,20 +48,6 @@
     "eslint-plugin-vue": "^8.0.3",
     "sass": "^1.43.4",
     "sass-loader": "^10.2.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "env": {
-      "node": true
-    },
-    "extends": [
-      "plugin:vue/vue3-essential",
-      "eslint:recommended"
-    ],
-    "parserOptions": {
-      "parser": "babel-eslint"
-    },
-    "rules": {}
   },
   "browserslist": [
     "> 1%",
