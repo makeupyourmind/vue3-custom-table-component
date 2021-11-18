@@ -3,6 +3,15 @@
   "version": "0.0.51",
   "private": false,
   "main": "dist/vue3-table-component-1.common.js",
+  "license": "MIT",
+  "author": {
+    "email": "nikitosnov@gmail.com",
+    "name": "Nikita (makeupyourmind)"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/makeupyourmind/vue3-custom-table-component"
+  },
   "keywords": [
     "vue",
     "vue3",
@@ -11,10 +20,6 @@
   "files": [
     "./dist/*"
   ],
-  "author": {
-    "email": "nikitosnov@gmail.com",
-    "name": "Nikita (makeupyourmind)"
-  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
