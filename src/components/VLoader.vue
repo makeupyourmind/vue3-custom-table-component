@@ -3,13 +3,29 @@
     <div class="v-loader-progress">
       <div class="v-loader-progress__element"></div>
     </div>
-    <p class="v-loader__text">Loading... Please wait</p>
+    <p class="v-loader__text">{{ loadingPlug }}</p>
   </div>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
   name: 'VLoader',
+  props: {
+    loaderMessage: {
+      type: String,
+    },
+  },
+  setup(props) {
+    const loadingPlug = computed(() => {
+      return props.loaderMessage ? props.loaderMessage : 'Loading... Please wait';
+    });
+
+    return {
+      loadingPlug,
+    };
+  },
 };
 </script>
 
