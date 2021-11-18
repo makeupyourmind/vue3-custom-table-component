@@ -1,12 +1,12 @@
 <template>
   <VTable
-    :use-api-sorting="true"
     :is-loading="false"
+    :use-api-sorting="true"
     :headers="headers"
     :items="desserts"
-    :is-pagination-mode-enabled="true"
+    :is-pagination-mode-enabled="false"
     :pagination-options="{
-      totalPages: 4,
+      totalPages: 1,
       perPage: 10,
     }"
     @handle-api-sorting="handleApiSorting"
@@ -17,13 +17,14 @@
   </VTable>
 </template>
 <script>
+import { reactive } from 'vue';
 import VTable from './components/VTable';
 
 export default {
   name: 'App',
   components: { VTable },
-  data: () => ({
-    headers: [
+  setup() {
+    const headers = reactive([
       {
         text: 'Dessert (100g serving)',
         value: 'name',
@@ -46,8 +47,9 @@ export default {
         text: 'Carbs (g)',
         value: 'carbs',
       },
-    ],
-    desserts: [
+    ]);
+
+    const desserts = reactive([
       {
         name: 'Frozen Yogurt',
         calories: 159,
@@ -72,15 +74,34 @@ export default {
         fat: 0.2,
         carbs: 98,
       },
-    ],
-  }),
-  methods: {
-    handleApiSorting(e) {
-      console.log('handleApiSorting', e);
-    },
-    onPageChange(page) {
-      console.log('page changed', page);
-    },
+    ]);
+
+    const handleApiSorting = (sortedFields) => {
+      console.log('handleApiSorting', sortedFields);
+    };
+
+    return {
+      headers,
+      desserts,
+      handleApiSorting,
+    };
   },
 };
 </script>
+
+<style lang="scss">
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: BlinkMacSystemFont, -apple-system, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+}
+</style>

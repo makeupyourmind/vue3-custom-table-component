@@ -14,12 +14,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '../assets/styles/_variables.scss';
+
 .v-loader-progress {
   background-color: $loader-main-color;
   overflow: hidden;
   width: 100%;
   height: 100%;
-  //position: absolute;
   top: 0;
   left: 0;
   display: flex;
