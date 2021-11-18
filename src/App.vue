@@ -1,18 +1,30 @@
 <template>
-  <VTable :headers="headers" :items="desserts" :is-pagination-mode-enabled="false">
+  <VTable
+    :is-loading="false"
+    :use-api-sorting="true"
+    :headers="headers"
+    :items="desserts"
+    :is-pagination-mode-enabled="false"
+    :pagination-options="{
+      totalPages: 1,
+      perPage: 10,
+    }"
+    @handle-api-sorting="handleApiSorting"
+  >
     <!--    <template #pagination>-->
     <!--      <VPagination :total-pages="2" :per-page="2" :current-page="1" @page-changed="onPageChange" />-->
     <!--    </template>-->
   </VTable>
 </template>
 <script>
+import { reactive } from 'vue';
 import VTable from './components/VTable';
 
 export default {
   name: 'App',
   components: { VTable },
-  data: () => ({
-    headers: [
+  setup() {
+    const headers = reactive([
       {
         text: 'Dessert (100g serving)',
         value: 'name',
@@ -35,8 +47,9 @@ export default {
         text: 'Carbs (g)',
         value: 'carbs',
       },
-    ],
-    desserts: [
+    ]);
+
+    const desserts = reactive([
       {
         name: 'Frozen Yogurt',
         calories: 159,
@@ -61,15 +74,17 @@ export default {
         fat: 0.2,
         carbs: 98,
       },
-    ],
-  }),
-  methods: {
-    // handleApiSorting(e) {
-    //   console.log('handleApiSorting', e);
-    // },
-    // onPageChange(page) {
-    //   console.log('page changed', page);
-    // },
+    ]);
+
+    const handleApiSorting = (sortedFields) => {
+      console.log('handleApiSorting', sortedFields);
+    };
+
+    return {
+      headers,
+      desserts,
+      handleApiSorting,
+    };
   },
 };
 </script>
