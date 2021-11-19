@@ -7,10 +7,10 @@
   </div>
 </template>
 
-<script>
-import { computed } from 'vue';
+<script lang="ts">
+import { computed, defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'VLoader',
   props: {
     loaderMessage: {
@@ -26,7 +26,7 @@ export default {
       loadingPlug,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

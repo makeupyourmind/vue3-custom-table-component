@@ -1,4 +1,5 @@
-import { ASC } from '../constants';
+import { ASC } from '@/constants';
+import { SortableField } from '@/types';
 
 /**
  * Get sortable fields in array format like ['field', '-field'].
@@ -7,7 +8,7 @@ import { ASC } from '../constants';
  * @param {Array} sortableFields - Array of sortable fields.
  * @return {*}
  */
-export function transformToFieldsWithSortingSign(sortableFields) {
+export function transformToFieldsWithSortingSign(sortableFields: SortableField[]) {
   return sortableFields.map((sortableField) => {
     const { field, order } = sortableField;
     return order === ASC ? field : `-${field}`;
@@ -20,7 +21,7 @@ export function transformToFieldsWithSortingSign(sortableFields) {
  * @param {Array} sortableFields - Sortable fields.
  * @return {Array} - Sortable fields with order field in sql format.
  */
-export function transformSortableFieldsOrderToSqlFormat(sortableFields) {
+export function transformSortableFieldsOrderToSqlFormat(sortableFields: SortableField[]) {
   return sortableFields.map((sortableField) => {
     return {
       ...sortableField,
@@ -29,14 +30,14 @@ export function transformSortableFieldsOrderToSqlFormat(sortableFields) {
   });
 }
 
-export function dynamicSort(property) {
+export function dynamicSort(property: string) {
   let sortOrder = 1;
   if (property[0] === '-') {
     sortOrder = -1;
     // eslint-disable-next-line no-param-reassign
     property = property.substr(1);
   }
-  return function (a, b) {
+  return function (a: { [key: string]: number }, b: { [key: string]: number }) {
     /* next line works with strings and numbers,
      * and you may want to customize it to your needs
      */
@@ -45,17 +46,17 @@ export function dynamicSort(property) {
   };
 }
 
-export function dynamicSortMultiple() {
+export function dynamicSortMultiple(...arg: string[]) {
   /*
    * save the arguments object as it will be overwritten
    * note that arguments object is an array-like object
    * consisting of the names of the properties to sort by
    */
-  const props = arguments;
-  return function (obj1, obj2) {
+  const props = arg;
+  return function (obj1: { [key: string]: number }, obj2: { [key: string]: number }) {
+    const numberOfProperties = props.length;
     let i = 0,
-      result = 0,
-      numberOfProperties = props.length;
+      result = 0;
     /* try getting a different result from 0 (equal)
      * as long as we have extra properties to compare
      */

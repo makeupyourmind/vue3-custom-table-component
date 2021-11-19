@@ -2,7 +2,7 @@
   <FontAwesomeIcon :icon="[namespace, icon]" />
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';

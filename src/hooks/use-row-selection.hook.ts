@@ -1,6 +1,11 @@
-import { computed } from 'vue';
+import { computed, ComputedRef } from 'vue';
+import { SelectedItem } from '@/types';
 
-export const useRowSelection = (props, context, { sortedData }) => {
+export const useRowSelection = (
+  props: { [key: string]: any },
+  context: any,
+  { sortedData }: { sortedData: ComputedRef<[]> }
+) => {
   const markedAllCheckboxes = computed(() => {
     return sortedData.value.length === props.modelValue.length;
   });
@@ -15,8 +20,10 @@ export const useRowSelection = (props, context, { sortedData }) => {
     updateSelectedItems(value);
   };
 
-  const onCheckboxChange = (newItem) => {
-    const indexOfItem = props.modelValue.findIndex((item) => item.name === newItem.name);
+  const onCheckboxChange = (newItem: SelectedItem) => {
+    const indexOfItem = props.modelValue.findIndex(
+      (item: SelectedItem) => item.name === newItem.name
+    );
     const modelValue = [...props.modelValue];
     if (indexOfItem !== -1) {
       modelValue.splice(indexOfItem, 1);
@@ -28,12 +35,12 @@ export const useRowSelection = (props, context, { sortedData }) => {
     updateSelectedItems(selectedItems);
   };
 
-  const updateSelectedItems = (value) => {
+  const updateSelectedItems = (value: SelectedItem[]) => {
     context.emit('update:modelValue', value);
   };
 
-  const isMarkedCheckbox = (item) => {
-    return !!props.modelValue.find((el) => el.name === item.name);
+  const isMarkedCheckbox = (item: SelectedItem) => {
+    return !!props.modelValue.find((el: SelectedItem) => el.name === item.name);
   };
 
   return {
