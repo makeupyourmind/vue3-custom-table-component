@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 module.exports = {
   root: true,
   env: {
@@ -15,8 +16,14 @@ module.exports = {
     'plugin:vue/vue3-essential',
     'plugin:prettier/recommended',
     '@vue/typescript',
+    'plugin:import/typescript',
   ],
-  plugins: ['unused-imports', 'prettier', '@typescript-eslint'],
+  plugins: [
+    'unused-imports',
+    'prettier',
+    '@typescript-eslint',
+    'eslint-plugin-import'
+  ],
   rules: {
     'vue/max-len': [
       'error',
@@ -54,5 +61,18 @@ module.exports = {
         ignoreRestSiblings: true,
       },
     ],
+    'import/order': [
+      'error',
+      {
+        "groups": ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        'newlines-between': 'always',
+      },
+    ],
+    'prettier/prettier': [
+      'error',
+      {
+        'endOfLine': 'auto',
+      }
+    ]
   },
 };
