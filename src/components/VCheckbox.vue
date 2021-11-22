@@ -1,12 +1,19 @@
 <template>
   <div class="v-checkbox">
-    <input :id="checkboxId" :checked="checked" type="checkbox" @change="onChange" />
+    <input
+      :id="checkboxId"
+      :aria-labelledby="checkboxId"
+      :checked="checked"
+      type="checkbox"
+      @change="onChange"
+    />
     <label
+      title="checkbox-label"
       :for="checkboxId"
       :class="{
         'some-checkbox-is-un-marked': isSomeCheckboxUnMarked,
       }"
-    ></label>
+    />
   </div>
 </template>
 
@@ -31,7 +38,7 @@ export default defineComponent({
   },
   setup(props) {
     const checkboxId = computed(() => {
-      return `checkbox-id-${props.id}`;
+      return `v-checkbox-id-${props.id}`;
     });
 
     const onChange = (e: Event) => {
@@ -62,17 +69,31 @@ export default defineComponent({
   width: 1px;
 }
 
+@mixin after-pseudo {
+  content: '';
+  opacity: 1;
+  background-color: transparent;
+  display: block;
+  position: absolute;
+  left: 0.65rem;
+  top: 0.25rem;
+  width: 0.5rem;
+  height: 1rem;
+  border-right: 3px solid $checkbox-checked;
+  transition: border-color 0.3s ease;
+}
+
 .v-checkbox {
   // custom checkbox
   input[type='checkbox'] {
     @include vh();
     + label {
       position: relative;
-      //padding: 4px 6px 0 32px;
       padding: 0.5rem 0 0 2rem;
       margin-bottom: 1rem;
       user-select: none;
       color: $checkbox-background;
+
       &:before {
         content: '';
         position: absolute;
@@ -86,6 +107,7 @@ export default defineComponent({
         text-align: center;
         transition: background 200ms ease-out;
       }
+
       &:after {
         content: '';
         position: absolute;
@@ -99,19 +121,9 @@ export default defineComponent({
     + label {
       &.some-checkbox-is-un-marked {
         &:after {
-          content: '';
-          opacity: 1;
-          background-color: transparent;
-          display: block;
-          position: absolute;
-          left: 0.65rem;
-          top: 0.25rem;
-          width: 0.5rem;
-          height: 1rem;
+          @include after-pseudo;
           border-bottom: none;
-          border-right: 3px solid $checkbox-checked;
           transform: rotate(90deg);
-          transition: border-color 0.3s ease;
         }
       }
     }
@@ -123,19 +135,9 @@ export default defineComponent({
         }
 
         &:after {
-          content: '';
-          opacity: 1;
-          background-color: transparent;
-          display: block;
-          position: absolute;
-          left: 0.65rem;
-          top: 0.25rem;
-          width: 0.5rem;
-          height: 1rem;
+          @include after-pseudo;
           border-bottom: 3px solid $checkbox-checked;
-          border-right: 3px solid $checkbox-checked;
           transform: rotate(45deg);
-          transition: border-color 0.3s ease;
         }
       }
     }

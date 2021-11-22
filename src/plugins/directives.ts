@@ -11,6 +11,7 @@ export const VueColumnsResizable = (el: HTMLElement) => {
   const min = 150; // minimum size of column that can be reached if we resize column
   // The max (fr) values for grid-template-columns
   const columnTypeToRatioMap: { [key: string]: number } = {
+    'number': 1,
     'text-short': 1.67,
     'text-long': 3.33,
   };
@@ -23,12 +24,13 @@ export const VueColumnsResizable = (el: HTMLElement) => {
   let headerBeingResized: HTMLElement | null;
 
   const updateColumnSizes = (columns: Column[]) => {
-    thead.style.gridTemplateColumns = columns.map(({ size }) => size).join(' ');
+    const gridTemplateColumns: string = columns.map(({ size }) => size).join(' ');
+    thead.style.gridTemplateColumns = gridTemplateColumns;
 
     const tbodyTrs = el.querySelectorAll<HTMLElement>('tbody tr');
 
     tbodyTrs.forEach((tr) => {
-      tr.style.gridTemplateColumns = columns.map(({ size }) => size).join(' ');
+      tr.style.gridTemplateColumns = gridTemplateColumns;
     });
   };
 
@@ -94,7 +96,7 @@ export const VueColumnsResizable = (el: HTMLElement) => {
     const useCustomWidth = headerStyles[0] === 'width';
     const gridTemplateColumnsStyle = thead.style.gridTemplateColumns;
     // If el is selectable (has a checkbox)
-    const isSelectable = [...header.classList].includes('v-table__header--selectable');
+    const isHeaderHasCheckbox = [...header.classList].includes('v-table__header--selectable');
     let minSize = `${min}px`;
 
     if (useCustomWidth) {
@@ -110,7 +112,7 @@ export const VueColumnsResizable = (el: HTMLElement) => {
     const column = {} as Column;
     column.header = header;
     // The initial size value for grid-template-columns:
-    column.size = isSelectable ? 'minmax(70px, auto)' : `minmax(${minSize}, ${max})`;
+    column.size = isHeaderHasCheckbox ? 'auto' : `minmax(${minSize}, ${max})`;
     column.customMinSize = useCustomWidth ? headerStyles.width : undefined;
     columns.push(column);
 

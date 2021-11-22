@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 module.exports = {
   root: true,
   env: {
@@ -18,12 +17,7 @@ module.exports = {
     '@vue/typescript',
     'plugin:import/typescript',
   ],
-  plugins: [
-    'unused-imports',
-    'prettier',
-    '@typescript-eslint',
-    'eslint-plugin-import'
-  ],
+  plugins: ['unused-imports', 'prettier', '@typescript-eslint', 'eslint-plugin-import'],
   rules: {
     'vue/max-len': [
       'error',
@@ -41,7 +35,6 @@ module.exports = {
     'no-param-reassign': ['error', { props: false }],
     'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
     'object-curly-newline': ['error', { consistent: true }],
-    // 'prettier/prettier': ['error', { semi: true }],
     'quote-props': ['error', 'consistent'],
     'vue/component-name-in-template-casing': ['error', 'PascalCase'],
     'vue/html-self-closing': 'off',
@@ -64,15 +57,18 @@ module.exports = {
     'import/order': [
       'error',
       {
-        "groups": ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
+        'groups': [
+          'builtin',
+          'external',
+          'internal',
+          'parent',
+          'sibling',
+          'index',
+          'object',
+          'type',
+        ],
         'newlines-between': 'always',
       },
     ],
-    'prettier/prettier': [
-      'error',
-      {
-        'endOfLine': 'auto',
-      }
-    ]
   },
 };

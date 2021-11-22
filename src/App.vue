@@ -14,8 +14,9 @@
       :show-select="true"
       :single-select="false"
       @handle-api-sorting="handleApiSorting"
+      @row-click="rowClick"
     >
-      <!--      <template #loader> here is your pagination </template>-->
+      <!--    <template #loader> here is your loader </template>-->
       <!--    <template #pagination>-->
       <!--      <VPagination :total-pages="2" :per-page="2" :current-page="1" @page-changed="onPageChange" />-->
       <!--    </template>-->
@@ -24,6 +25,30 @@
       <!--          {{ item.calories }}-->
       <!--        </h2>-->
       <!--      </template>-->
+      <!--      <template #no-content>No content for table</template>-->
+      <!--      <template #[`header.name.content`]="{ header, doSort }">-->
+      <!--        &lt;!&ndash;            Todo: move logic to component?&ndash;&gt;-->
+      <!--        <span @click="doSort && doSort(header.value)">{{ header.text }} custom</span>-->
+      <!--      </template>-->
+      <!--      <template #header-select-checkbox="slotProps">-->
+      <!--        <VCheckbox-->
+      <!--          :is-some-checkbox-un-marked="slotProps.isSomeCheckboxUnMarked"-->
+      <!--          :checked="slotProps.checked"-->
+      <!--          @change="slotProps.change"-->
+      <!--          id="parent-mark-all"-->
+      <!--        />-->
+      <!--      </template>-->
+      <!--      <template #row-select-checkbox="slotProps">-->
+      <!--        <VCheckbox-->
+      <!--          :checked="slotProps.checked"-->
+      <!--          @change="slotProps.change(slotProps.clickedItem)"-->
+      <!--          :id="`parent-${slotProps.id}`"-->
+      <!--        />-->
+      <!--      </template>-->
+      <template #[`item.management`]="slotsProps">
+        <button @click.stop="managementClick(slotsProps.item)">Click me</button>
+        <button @click.stop="managementClick(slotsProps.item)">Click me</button>
+      </template>
     </VTable>
   </div>
 </template>
@@ -31,14 +56,16 @@
 <script lang="ts">
 import { ref, reactive, defineComponent, watch } from 'vue';
 
-import { SortableField } from '@/types';
+import { Item, SortableField } from '@/types';
 import VTable from '@/components/VTable.vue';
+// import VCheckbox from '@/components/VCheckbox.vue';
 
 export default defineComponent({
   name: 'App',
   components: { VTable },
   setup() {
     const selected = ref([]);
+
     const headers = reactive([
       {
         text: 'Dessert (100g serving)',
@@ -62,10 +89,15 @@ export default defineComponent({
         text: 'Carbs (g)',
         value: 'carbs',
       },
+      {
+        text: 'Management',
+        value: 'management',
+      },
     ]);
 
     const desserts = reactive([
       {
+        id: 1,
         name: 'Frozen Yogurt',
         calories: 159,
         fat: 6.0,
@@ -82,17 +114,27 @@ export default defineComponent({
         calories: 305,
         fat: 3.7,
         carbs: 67,
+        management: null,
       },
       {
         name: 'Lollipop',
         calories: 392,
         fat: 0.2,
         carbs: 98,
+        management: 'f',
       },
     ]);
 
     const handleApiSorting = (sortedFields: SortableField[]) => {
       console.log('handleApiSorting', sortedFields);
+    };
+
+    const rowClick = (clickedItem: Item) => {
+      console.log('clicked item', clickedItem);
+    };
+
+    const managementClick = (item: Item) => {
+      console.log('managementClick', item);
     };
 
     watch(selected, (selectedItems) => {
@@ -104,6 +146,8 @@ export default defineComponent({
       desserts,
       selected,
       handleApiSorting,
+      rowClick,
+      managementClick,
     };
   },
 });
