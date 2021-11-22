@@ -89,7 +89,7 @@ import VCheckbox from '@/components/VCheckbox.vue';
 import { VueColumnsResizable } from '@/plugins/directives';
 import { useRowSelection } from '@/hooks/use-row-selection.hook';
 import { useSortable } from '@/hooks/use-sortable.hook';
-import { Header, SelectedItem } from '@/types';
+import { Header, Item } from '@/types';
 
 export default defineComponent({
   name: 'VTable',
@@ -136,7 +136,7 @@ export default defineComponent({
     },
     // Model for selected elements
     modelValue: {
-      type: Array as PropType<SelectedItem[]>,
+      type: Array as PropType<Item[]>,
       default: () => [],
     },
     // Hide select all elements checkbox

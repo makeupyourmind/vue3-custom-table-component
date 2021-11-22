@@ -5,7 +5,7 @@ import {
   transformToFieldsWithSortingSign,
 } from '@/utils/utils';
 import { computed, Ref, reactive, ComputedRef } from 'vue';
-import { SortableField } from '@/types';
+import { Item, SortableField, SortedItem } from '@/types';
 
 export const useSortable = (
   props: any,
@@ -33,7 +33,7 @@ export const useSortable = (
     }
   };
 
-  const sliceArrayForPagination = (array: []) => {
+  const sliceArrayForPagination = (array: Item[]) => {
     return [...array].slice(
       Math.max(0, (currentPage.value - 1) * props.paginationOptions.perPage),
       props.paginationOptions.perPage * currentPage.value
@@ -60,7 +60,7 @@ export const useSortable = (
     return sortableFields[method]((sortableField: SortableField) => sortableField.field === field);
   };
 
-  const sortedData: ComputedRef<[]> = computed(() => {
+  const sortedData: ComputedRef<SortedItem[]> = computed(() => {
     const { useApiSorting, isPaginationModeEnabled, items } = props;
     // check if user wants to use custom pagination
     const useCustomPagination = !!context.slots.pagination;

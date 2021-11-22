@@ -1,5 +1,5 @@
 import { ASC } from '@/constants';
-import { SortableField } from '@/types';
+import { GeneralObject, SortableField } from '@/types';
 
 /**
  * Get sortable fields in array format like ['field', '-field'].
@@ -37,7 +37,7 @@ export function dynamicSort(property: string) {
     // eslint-disable-next-line no-param-reassign
     property = property.substr(1);
   }
-  return function (a: { [key: string]: number }, b: { [key: string]: number }) {
+  return function (a: GeneralObject, b: GeneralObject) {
     /* next line works with strings and numbers,
      * and you may want to customize it to your needs
      */
@@ -53,7 +53,7 @@ export function dynamicSortMultiple(...arg: string[]) {
    * consisting of the names of the properties to sort by
    */
   const props = arg;
-  return function (obj1: { [key: string]: number }, obj2: { [key: string]: number }) {
+  return function (obj1: GeneralObject, obj2: GeneralObject) {
     const numberOfProperties = props.length;
     let i = 0,
       result = 0;
@@ -66,4 +66,21 @@ export function dynamicSortMultiple(...arg: string[]) {
     }
     return result;
   };
+}
+
+/**
+ * Get index of searching object.
+ *
+ * @param {Object} obj - The object that looking for.
+ * @param {Array} list - The array in which looking for needed object.
+ */
+export function findObjectIndex(list: GeneralObject[], obj: GeneralObject) {
+  let i;
+  for (i = 0; i < list.length; i++) {
+    if (list[i] === obj) {
+      return i;
+    }
+  }
+
+  return -1;
 }

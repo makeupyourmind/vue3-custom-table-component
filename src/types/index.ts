@@ -17,6 +17,10 @@ export type SortableField = {
   order: string;
 };
 
-export type SelectedItem = {
+export type GeneralObject = {
   [key: string]: string | number;
 };
+
+export type Item = GeneralObject;
+
+export type SortedItem = GeneralObject;
