@@ -30,6 +30,7 @@
 
 <script lang="ts">
 import { ref, reactive, defineComponent, watch } from 'vue';
+
 import { SortableField } from '@/types';
 import VTable from '@/components/VTable.vue';
 

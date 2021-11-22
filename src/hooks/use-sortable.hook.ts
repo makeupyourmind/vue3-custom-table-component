@@ -1,10 +1,11 @@
+import { computed, Ref, reactive, ComputedRef } from 'vue';
+
 import { ASC, DESC } from '@/constants';
 import {
   dynamicSortMultiple,
   transformSortableFieldsOrderToSqlFormat,
   transformToFieldsWithSortingSign,
 } from '@/utils/utils';
-import { computed, Ref, reactive, ComputedRef } from 'vue';
 import { Item, SortableField, SortedItem } from '@/types';
 
 export const useSortable = (

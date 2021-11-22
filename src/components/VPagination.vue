@@ -60,6 +60,7 @@
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
+
 import VIcon from './VIcon.vue';
 
 export default defineComponent({
