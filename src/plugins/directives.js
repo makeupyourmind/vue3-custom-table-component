@@ -41,7 +41,7 @@ export const VueColumnsResizable = (el) => {
 
       // Update the column object with the new size value
       const column = columns.find(({ header }) => header === headerBeingResized);
-      const minSizeOfColumn = column.originalMinSize ? parseInt(column.originalMinSize) : min;
+      const minSizeOfColumn = column.customMinSize ? parseInt(column.customMinSize) : min;
       column.size = Math.max(minSizeOfColumn, width) + 'px'; // Enforce our minimum
 
       // For the other headers which don't have a set width, fix it to their computed width
@@ -85,7 +85,15 @@ export const VueColumnsResizable = (el) => {
     const headerStyles = header.style;
     const useCustomWidth = headerStyles[0] === 'width';
     const gridTemplateColumnsStyle = thead.style['grid-template-columns'];
-    let minSize = headerStyles[headerStyles[0]];
+    // If el is selectable (has a checkbox)
+    const isSelectable = [...header.classList].includes('v-table__header--selectable');
+    let minSize = `${min}px`;
+
+    if (useCustomWidth) {
+      minSize = headerStyles.width;
+    }
+
+    // to keep values when do resize and click on some header item
     if (gridTemplateColumnsStyle) {
       const arr = gridTemplateColumnsStyle.split(' ');
       minSize = arr[idx];
@@ -94,9 +102,9 @@ export const VueColumnsResizable = (el) => {
     columns.push({
       header,
       // The initial size value for grid-template-columns:
-      size: useCustomWidth ? `minmax(${minSize}, ${max})` : `minmax(${min}px, ${max})`,
+      size: isSelectable ? 'minmax(70px, auto)' : `minmax(${minSize}, ${max})`,
       // To handle min width size, that user passed to header item.
-      ...(useCustomWidth && { originalMinSize: headerStyles[headerStyles[0]] }),
+      ...(useCustomWidth && { customMinSize: headerStyles[headerStyles[0]] }),
     });
 
     // If we use custom width, we need to fill empty spaces for items, that use custom width.

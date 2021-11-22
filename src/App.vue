@@ -1,29 +1,41 @@
 <template>
-  <VTable
-    :is-loading="false"
-    :use-api-sorting="true"
-    :headers="headers"
-    :items="desserts"
-    :is-pagination-mode-enabled="false"
-    :pagination-options="{
-      totalPages: 1,
-      perPage: 10,
-    }"
-    @handle-api-sorting="handleApiSorting"
-  >
-    <!--    <template #pagination>-->
-    <!--      <VPagination :total-pages="2" :per-page="2" :current-page="1" @page-changed="onPageChange" />-->
-    <!--    </template>-->
-  </VTable>
+  <div>
+    <VTable
+      v-model="selected"
+      :is-loading="false"
+      :use-api-sorting="true"
+      :headers="headers"
+      :items="desserts"
+      :is-pagination-mode-enabled="false"
+      :pagination-options="{
+        totalPages: 1,
+        perPage: 10,
+      }"
+      :show-select="true"
+      :single-select="false"
+      @handle-api-sorting="handleApiSorting"
+    >
+      <!--      <template #loader> here is your pagination </template>-->
+      <!--    <template #pagination>-->
+      <!--      <VPagination :total-pages="2" :per-page="2" :current-page="1" @page-changed="onPageChange" />-->
+      <!--    </template>-->
+      <!--      <template #[`item.calories`]="{ item }">-->
+      <!--        <h2>-->
+      <!--          {{ item.calories }}-->
+      <!--        </h2>-->
+      <!--      </template>-->
+    </VTable>
+  </div>
 </template>
 <script>
-import { reactive } from 'vue';
+import { reactive, ref, watch } from 'vue';
 import VTable from './components/VTable';
 
 export default {
   name: 'App',
   components: { VTable },
   setup() {
+    const selected = ref([]);
     const headers = reactive([
       {
         text: 'Dessert (100g serving)',
@@ -80,9 +92,14 @@ export default {
       console.log('handleApiSorting', sortedFields);
     };
 
+    watch(selected, (selectedItems) => {
+      console.log('selectedItems', selectedItems);
+    });
+
     return {
       headers,
       desserts,
+      selected,
       handleApiSorting,
     };
   },

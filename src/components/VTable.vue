@@ -1,12 +1,23 @@
 <template>
   <div>
     <div v-if="isLoading">
-      <VLoader />
+      <slot name="loader">
+        <VLoader :loader-message="loaderMessage" />
+      </slot>
     </div>
     <div v-else>
       <table v-columns-resizable class="v-table">
         <thead>
           <tr>
+            <th class="v-table__header--selectable">
+              <VCheckbox
+                v-if="showSelect && !singleSelect"
+                id="mark-all"
+                :checked="markedAllCheckboxes"
+                :is-some-checkbox-un-marked="isSomeCheckboxUnMarked"
+                @change="selectAllCheckboxes"
+              />
+            </th>
             <th
               v-for="(header, idx) in headers"
               :key="idx"
@@ -36,8 +47,20 @@
         </thead>
         <tbody>
           <tr v-for="(item, idx) in sortedData" :key="idx">
-            <td v-for="(itemKey, keyIdx) in Object.keys(item)" :key="keyIdx">
-              {{ getTableRowValue(item, itemKey) }}
+            <td v-if="showSelect" class="v-table__item--selectable">
+              <VCheckbox
+                :id="idx"
+                :checked="markedAllCheckboxes || isMarkedCheckbox(item)"
+                @change="onCheckboxChange(item)"
+              />
+            </td>
+            <td v-for="(itemKey, keyIdx) in Object.keys(item)" :key="keyIdx" class="v-table__item">
+              <slot v-if="itemKey in item" :name="`item.${itemKey}`" :item="item">
+                {{ getTableRowValue(item, itemKey) }}
+              </slot>
+              <template v-else>
+                {{ getTableRowValue(item, itemKey) }}
+              </template>
             </td>
           </tr>
         </tbody>
@@ -57,21 +80,19 @@
 </template>
 
 <script>
-import { computed, defineComponent, reactive, ref } from 'vue';
-import {
-  dynamicSortMultiple,
-  transformSortableFieldsOrderToSqlFormat,
-  transformToFieldsWithSortingSign,
-} from '../utils/utils';
-import { ASC, DESC } from '../constants';
-import { VueColumnsResizable } from '../plugins/directives';
+import { defineComponent, ref } from 'vue';
+
 import VLoader from './VLoader';
 import VPagination from './VPagination.vue';
 import VIcon from './VIcon';
+import VCheckbox from './VCheckbox';
+import { VueColumnsResizable } from '../plugins/directives';
+import { useRowSelection } from '../hooks/use-row-selection.hook';
+import { useSortable } from '../hooks/use-sortable.hook';
 
 export default defineComponent({
   name: 'VTable',
-  components: { VLoader, VPagination, VIcon },
+  components: { VLoader, VPagination, VIcon, VCheckbox },
   directives: {
     'columns-resizable': VueColumnsResizable,
   },
@@ -87,6 +108,10 @@ export default defineComponent({
     isLoading: {
       type: Boolean,
       default: false,
+    },
+    loaderMessage: {
+      type: String,
+      default: null,
     },
     useApiSorting: {
       type: Boolean,
@@ -104,10 +129,23 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    showSelect: {
+      type: Boolean,
+      default: false,
+    },
+    // Model for selected elements
+    modelValue: {
+      type: Array,
+      default: () => [],
+    },
+    // Hide select all elements checkbox
+    singleSelect: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['handle-api-sorting'],
+  emits: ['handle-api-sorting', 'update:modelValue'],
   setup(props, context) {
-    const sortableFields = reactive([]);
     const currentPage = ref(1);
 
     const getTableRowValue = (item, key) => {
@@ -115,77 +153,22 @@ export default defineComponent({
       return header ? item[key] : '';
     };
 
-    const doSort = (field) => {
-      const indexOfSearchableField = sortableFieldsManipulations('findIndex', field);
-      if (indexOfSearchableField !== -1) {
-        const sortableField = sortableFields[indexOfSearchableField];
-        sortableField.order === ASC
-          ? (sortableField.order = DESC)
-          : sortableFields.splice(indexOfSearchableField, 1);
-      } else {
-        sortableFields.push({
-          field,
-          order: ASC,
-        });
-      }
-
-      if (props.useApiSorting) {
-        context.emit('handle-api-sorting', transformSortableFieldsOrderToSqlFormat(sortableFields));
-      }
-    };
-
-    const hasSortableIcon = (field) => {
-      return !!sortableFieldsManipulations('find', field);
-    };
-
-    const getSortableNumber = (field) => {
-      return sortableFieldsManipulations('findIndex', field);
-    };
-
-    const getSortDirection = (field) => {
-      const sortableField = sortableFieldsManipulations('find', field);
-      const order = sortableField.order === ASC ? 'up' : 'down';
-      return `sort-${order}`;
-    };
-
-    const sortableFieldsManipulations = (method, field) => {
-      return sortableFields[method]((sortableField) => sortableField.field === field);
-    };
-
     const onPageChange = (page) => {
       currentPage.value = page;
     };
 
-    const sliceArrayForPagination = (array) => {
-      return [...array].slice(
-        Math.max(0, (currentPage.value - 1) * props.paginationOptions.perPage),
-        props.paginationOptions.perPage * currentPage.value
-      );
-    };
+    const { doSort, hasSortableIcon, getSortableNumber, getSortDirection, sortedData } =
+      useSortable(props, context, {
+        currentPage,
+      });
 
-    const sortedData = computed(() => {
-      const { useApiSorting, isPaginationModeEnabled, items } = props;
-      // check if user wants to use custom pagination
-      const useCustomPagination = !!context.slots.pagination;
-
-      if (
-        (isPaginationModeEnabled && useCustomPagination) ||
-        (useApiSorting && isPaginationModeEnabled && useCustomPagination)
-      ) {
-        return items;
-      }
-
-      if (
-        (isPaginationModeEnabled && !useCustomPagination) ||
-        (useApiSorting && isPaginationModeEnabled && !useCustomPagination)
-      ) {
-        return sliceArrayForPagination(items).sort(
-          dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields))
-        );
-      }
-
-      return items.sort(dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields)));
-    });
+    const {
+      selectAllCheckboxes,
+      onCheckboxChange,
+      isMarkedCheckbox,
+      markedAllCheckboxes,
+      isSomeCheckboxUnMarked,
+    } = useRowSelection(props, context, { sortedData });
 
     return {
       getTableRowValue,
@@ -196,6 +179,11 @@ export default defineComponent({
       getSortableNumber,
       currentPage,
       onPageChange,
+      selectAllCheckboxes,
+      onCheckboxChange,
+      isMarkedCheckbox,
+      markedAllCheckboxes,
+      isSomeCheckboxUnMarked,
     };
   },
 });
@@ -203,10 +191,8 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .v-table {
-  display: grid;
   border-collapse: collapse;
   min-width: 100%;
-  grid-template-columns: auto;
   text-align: initial;
 
   thead,
@@ -217,19 +203,19 @@ export default defineComponent({
 
   thead {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: 4.375rem repeat(auto-fit, minmax(9.375rem, 1fr));
   }
 
   tbody {
     tr {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: 4.375rem repeat(auto-fit, minmax(9.375rem, 1fr));
     }
   }
 
   th,
   td {
-    padding: 15px;
+    padding: 1rem;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -272,8 +258,8 @@ export default defineComponent({
   }
 
   td {
-    padding-top: 10px;
-    padding-bottom: 10px;
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
     color: #808080;
   }
 
@@ -285,7 +271,14 @@ export default defineComponent({
     &--sortable {
       cursor: pointer;
       display: flex;
-      margin-right: 30px;
+      margin-right: 1.875rem;
+    }
+  }
+
+  &__header,
+  &__item {
+    &--selectable {
+      width: 4.375rem;
     }
   }
 }
