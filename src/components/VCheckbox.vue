@@ -10,10 +10,10 @@
   </div>
 </template>
 
-<script>
-import { computed } from 'vue';
+<script lang="ts">
+import { computed, defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'VCheckbox',
   props: {
     id: {
@@ -34,9 +34,9 @@ export default {
       return `checkbox-id-${props.id}`;
     });
 
-    const onChange = (e) => {
+    const onChange = (e: Event) => {
       if (props.checked) {
-        e.target.checked = props.checked;
+        (e.target as HTMLInputElement).checked = props.checked;
       }
     };
 
@@ -45,7 +45,7 @@ export default {
       onChange,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

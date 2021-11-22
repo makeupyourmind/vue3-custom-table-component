@@ -27,11 +27,13 @@
     </VTable>
   </div>
 </template>
-<script>
-import { reactive, ref, watch } from 'vue';
-import VTable from './components/VTable';
 
-export default {
+<script lang="ts">
+import { ref, reactive, defineComponent, watch } from 'vue';
+import { SortableField } from '@/types';
+import VTable from '@/components/VTable.vue';
+
+export default defineComponent({
   name: 'App',
   components: { VTable },
   setup() {
@@ -88,7 +90,7 @@ export default {
       },
     ]);
 
-    const handleApiSorting = (sortedFields) => {
+    const handleApiSorting = (sortedFields: SortableField[]) => {
       console.log('handleApiSorting', sortedFields);
     };
 
@@ -103,7 +105,7 @@ export default {
       handleApiSorting,
     };
   },
-};
+});
 </script>
 
 <style lang="scss">

@@ -79,16 +79,17 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue';
+<script lang="ts">
+import { defineComponent, PropType, ref } from 'vue';
 
-import VLoader from './VLoader';
-import VPagination from './VPagination.vue';
-import VIcon from './VIcon';
-import VCheckbox from './VCheckbox';
-import { VueColumnsResizable } from '../plugins/directives';
-import { useRowSelection } from '../hooks/use-row-selection.hook';
-import { useSortable } from '../hooks/use-sortable.hook';
+import VLoader from '@/components/VLoader.vue';
+import VPagination from '@/components/VPagination.vue';
+import VIcon from '@/components/VIcon.vue';
+import VCheckbox from '@/components/VCheckbox.vue';
+import { VueColumnsResizable } from '@/plugins/directives';
+import { useRowSelection } from '@/hooks/use-row-selection.hook';
+import { useSortable } from '@/hooks/use-sortable.hook';
+import { Header, Item } from '@/types';
 
 export default defineComponent({
   name: 'VTable',
@@ -98,7 +99,7 @@ export default defineComponent({
   },
   props: {
     headers: {
-      type: Array,
+      type: Array as PropType<Header[]>,
       required: true,
     },
     items: {
@@ -135,7 +136,7 @@ export default defineComponent({
     },
     // Model for selected elements
     modelValue: {
-      type: Array,
+      type: Array as PropType<Item[]>,
       default: () => [],
     },
     // Hide select all elements checkbox
@@ -148,12 +149,14 @@ export default defineComponent({
   setup(props, context) {
     const currentPage = ref(1);
 
-    const getTableRowValue = (item, key) => {
-      const header = props.headers.find((header) => header.value === key);
+    const getTableRowValue = (item: { [key: string]: string }, key: string) => {
+      const header: Header | undefined = props.headers.find(
+        (header: Header) => header.value === key
+      );
       return header ? item[key] : '';
     };
 
-    const onPageChange = (page) => {
+    const onPageChange = (page: number) => {
       currentPage.value = page;
     };
 

@@ -58,11 +58,11 @@
   </ul>
 </template>
 
-<script>
-import { computed } from 'vue';
-import VIcon from './VIcon';
+<script lang="ts">
+import { computed, defineComponent } from 'vue';
+import VIcon from './VIcon.vue';
 
-export default {
+export default defineComponent({
   name: 'VPagination',
   components: { VIcon },
   props: {
@@ -133,7 +133,7 @@ export default {
       context.emit('page-changed', props.currentPage - 1);
     };
 
-    const onClickPage = (page) => {
+    const onClickPage = (page: number) => {
       context.emit('page-changed', page);
     };
 
@@ -145,7 +145,7 @@ export default {
       context.emit('page-changed', props.totalPages);
     };
 
-    const isPageActive = (page) => {
+    const isPageActive = (page: number) => {
       return props.currentPage === page;
     };
 
@@ -162,7 +162,7 @@ export default {
       isPageActive,
     };
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

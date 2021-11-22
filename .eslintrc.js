@@ -6,16 +6,17 @@ module.exports = {
     node: true,
   },
   parserOptions: {
-    parser: '@babel/eslint-parser',
+    parser: '@typescript-eslint/parser',
   },
   extends: [
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
     'eslint:recommended',
-    // https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
-    // consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
     'plugin:vue/vue3-essential',
     'plugin:prettier/recommended',
+    '@vue/typescript',
   ],
-  plugins: ['unused-imports', 'prettier'],
+  plugins: ['unused-imports', 'prettier', '@typescript-eslint'],
   rules: {
     'vue/max-len': [
       'error',

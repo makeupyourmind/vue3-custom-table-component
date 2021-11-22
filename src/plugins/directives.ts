@@ -1,13 +1,16 @@
-export const VueColumnsResizable = (el) => {
+import { Column } from '@/types';
+
+export const VueColumnsResizable = (el: HTMLElement) => {
   const nodeName = el.nodeName;
   if (['TABLE', 'THEAD'].indexOf(nodeName) < 0) return;
 
-  const thead = el.querySelector('thead');
+  const thead: HTMLElement | null = el.querySelector('thead');
+  if (!thead) return;
   const ths = el.querySelectorAll('th'); // header items
 
   const min = 150; // minimum size of column that can be reached if we resize column
   // The max (fr) values for grid-template-columns
-  const columnTypeToRatioMap = {
+  const columnTypeToRatioMap: { [key: string]: number } = {
     'text-short': 1.67,
     'text-long': 3.33,
   };
@@ -16,13 +19,13 @@ export const VueColumnsResizable = (el) => {
     The following will soon be filled with column objects containing
     the header element and their size value for grid-template-columns
   */
-  const columns = [];
-  let headerBeingResized;
+  const columns: Column[] = [];
+  let headerBeingResized: HTMLElement | null;
 
-  const updateColumnSizes = (columns) => {
+  const updateColumnSizes = (columns: Column[]) => {
     thead.style.gridTemplateColumns = columns.map(({ size }) => size).join(' ');
 
-    const tbodyTrs = el.querySelectorAll('tbody tr');
+    const tbodyTrs = el.querySelectorAll<HTMLElement>('tbody tr');
 
     tbodyTrs.forEach((tr) => {
       tr.style.gridTemplateColumns = columns.map(({ size }) => size).join(' ');
@@ -32,23 +35,27 @@ export const VueColumnsResizable = (el) => {
   // The next three functions are mouse event callbacks
 
   // Where the magic happens. I.e. when they're actually resizing
-  const onMouseMove = (e) => {
+  const onMouseMove = (e: MouseEvent) => {
     requestAnimationFrame(() => {
       // console.log('onMouseMove');
       // Calculate the desired width
-      let horizontalScrollOffset = document.documentElement.scrollLeft;
+      const horizontalScrollOffset = document.documentElement.scrollLeft;
       const width = horizontalScrollOffset + e.clientX - (headerBeingResized?.offsetLeft || 0);
 
       // Update the column object with the new size value
-      const column = columns.find(({ header }) => header === headerBeingResized);
-      const minSizeOfColumn = column.customMinSize ? parseInt(column.customMinSize) : min;
-      column.size = Math.max(minSizeOfColumn, width) + 'px'; // Enforce our minimum
+      const column: Column | undefined = columns.find(
+        ({ header }) => header === headerBeingResized
+      );
+      if (column) {
+        const minSizeOfColumn = column.customMinSize ? parseInt(column.customMinSize) : min;
+        column.size = Math.max(minSizeOfColumn, width) + 'px'; // Enforce our minimum
+      }
 
       // For the other headers which don't have a set width, fix it to their computed width
       columns.forEach((column) => {
         if (column.size.startsWith('minmax')) {
           // isn't fixed yet (it would be a pixel value otherwise)
-          column.size = parseInt(column.header.clientWidth, 10) + 'px';
+          column.size = parseInt(String(column.header.clientWidth), 10) + 'px';
         }
       });
 
@@ -65,26 +72,27 @@ export const VueColumnsResizable = (el) => {
     // console.log('onMouseUp');
     window.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('mouseup', onMouseUp);
-    headerBeingResized.classList.remove('header--being-resized');
+    headerBeingResized && headerBeingResized.classList.remove('header--being-resized');
     headerBeingResized = null;
   };
 
   // Get ready, they're about to resize
-  const initResize = ({ target }) => {
+  const initResize = (e: MouseEvent) => {
     // console.log('initResize');
-    headerBeingResized = target.parentNode;
+    if (!e.target) return;
+    headerBeingResized = (e.target as HTMLElement).parentNode as HTMLElement;
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
-    headerBeingResized.classList.add('header--being-resized');
+    headerBeingResized && headerBeingResized.classList.add('header--being-resized');
   };
 
   // Let's populate that columns array and add listeners to the resize handles
-  ths.forEach((header, idx) => {
-    const max = (columnTypeToRatioMap[header.dataset.type] || 1) + 'fr';
+  ths.forEach((header: HTMLElement, idx) => {
+    const max = (header.dataset.type ? columnTypeToRatioMap[header.dataset.type] : 1) + 'fr';
 
     const headerStyles = header.style;
     const useCustomWidth = headerStyles[0] === 'width';
-    const gridTemplateColumnsStyle = thead.style['grid-template-columns'];
+    const gridTemplateColumnsStyle = thead.style.gridTemplateColumns;
     // If el is selectable (has a checkbox)
     const isSelectable = [...header.classList].includes('v-table__header--selectable');
     let minSize = `${min}px`;
@@ -99,22 +107,21 @@ export const VueColumnsResizable = (el) => {
       minSize = arr[idx];
     }
 
-    columns.push({
-      header,
-      // The initial size value for grid-template-columns:
-      size: isSelectable ? 'minmax(70px, auto)' : `minmax(${minSize}, ${max})`,
-      // To handle min width size, that user passed to header item.
-      ...(useCustomWidth && { customMinSize: headerStyles[headerStyles[0]] }),
-    });
+    const column = {} as Column;
+    column.header = header;
+    // The initial size value for grid-template-columns:
+    column.size = isSelectable ? 'minmax(70px, auto)' : `minmax(${minSize}, ${max})`;
+    column.customMinSize = useCustomWidth ? headerStyles.width : undefined;
+    columns.push(column);
 
     // If we use custom width, we need to fill empty spaces for items, that use custom width.
     if (useCustomWidth) {
       headerStyles.width = 'auto';
     }
-    const headerHasResizeHandler = header.querySelector('.resize-handle');
+    const headerHasResizeHandler = header.querySelector<HTMLElement>('.resize-handle');
 
     if (headerHasResizeHandler) {
-      headerHasResizeHandler?.addEventListener('mousedown', initResize);
+      headerHasResizeHandler.addEventListener('mousedown', initResize);
     }
   });
 
