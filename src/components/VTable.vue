@@ -1,70 +1,110 @@
 <template>
   <div>
+    <!--    loader slot -->
     <div v-if="isLoading">
       <slot name="loader">
         <VLoader :loader-message="loaderMessage" />
       </slot>
     </div>
+    <!--    table content -->
     <div v-else>
       <table v-columns-resizable class="v-table">
         <thead>
           <tr>
-            <th class="v-table__header--selectable">
-              <VCheckbox
-                v-if="showSelect && !singleSelect"
-                id="mark-all"
+            <th v-if="showSelect" class="v-table__header--selectable">
+              <slot
+                v-if="!singleSelect && sortedData.length"
+                name="header-select-checkbox"
+                :change="selectAllCheckboxes"
                 :checked="markedAllCheckboxes"
                 :is-some-checkbox-un-marked="isSomeCheckboxUnMarked"
-                @change="selectAllCheckboxes"
-              />
+              >
+                <VCheckbox
+                  id="mark-all"
+                  :checked="markedAllCheckboxes"
+                  :is-some-checkbox-un-marked="isSomeCheckboxUnMarked"
+                  @change="selectAllCheckboxes"
+                />
+              </slot>
             </th>
             <th
-              v-for="(header, idx) in headers"
+              v-for="(header, idx) in filteredHeaders"
               :key="idx"
               class="v-table__header"
               :style="{ width: header.width }"
             >
-              <span
-                :class="{
-                  'v-table__header--sortable': header.sortable,
-                }"
-                @click="header.sortable ? doSort(header.value) : false"
+              <slot
+                :name="`header.${header.value}.content`"
+                :header="header"
+                :doSort="header.sortable ? doSort : false"
+                :has-sortable-icon="hasSortableIcon(header.value)"
               >
-                <span>
-                  {{ header.text }}
+                <span
+                  :class="{
+                    'v-table__header--sortable': header.sortable,
+                  }"
+                  @click="header.sortable ? doSort(header.value) : false"
+                >
+                  <span>
+                    {{ header.text }}
+                  </span>
+                  <VIcon
+                    v-if="header.sortable && hasSortableIcon(header.value)"
+                    :icon="getSortDirection(header.value)"
+                  />
+                  <span v-if="hasSortableIcon(header.value)">{{
+                    getSortableNumber(header.value) + 1
+                  }}</span>
                 </span>
-                <VIcon
-                  v-if="header.sortable && hasSortableIcon(header.value)"
-                  :icon="getSortDirection(header.value)"
-                />
-                <span v-if="hasSortableIcon(header.value)">{{
-                  getSortableNumber(header.value) + 1
-                }}</span>
-              </span>
+              </slot>
               <span v-if="header.resizable" class="resize-handle"></span>
             </th>
           </tr>
         </thead>
+        <!--        table body-->
         <tbody>
-          <tr v-for="(item, idx) in sortedData" :key="idx">
-            <td v-if="showSelect" class="v-table__item--selectable">
-              <VCheckbox
-                :id="idx"
-                :checked="markedAllCheckboxes || isMarkedCheckbox(item)"
-                @change="onCheckboxChange(item)"
-              />
-            </td>
-            <td v-for="(itemKey, keyIdx) in Object.keys(item)" :key="keyIdx" class="v-table__item">
-              <slot v-if="itemKey in item" :name="`item.${itemKey}`" :item="item">
-                {{ getTableRowValue(item, itemKey) }}
-              </slot>
-              <template v-else>
-                {{ getTableRowValue(item, itemKey) }}
+          <template v-if="sortedData.length">
+            <tr v-for="(item, idx) in sortedData" :key="idx">
+              <td v-if="showSelect" class="v-table__item--selectable">
+                <slot
+                  name="row-select-checkbox"
+                  :id="idx"
+                  :change="onCheckboxChange"
+                  :checked="markedAllCheckboxes || isMarkedCheckbox(item)"
+                  :clickedItem="item"
+                >
+                  <VCheckbox
+                    :id="idx"
+                    :checked="markedAllCheckboxes || isMarkedCheckbox(item)"
+                    @change="onCheckboxChange(item)"
+                  />
+                </slot>
+              </td>
+              <td
+                @click="rowClick(item)"
+                v-for="(header, keyIdx) in filteredHeaders"
+                :key="keyIdx"
+                class="v-table__item"
+              >
+                <slot :name="`item.${header.value}`" :item="item">
+                  {{ getTableRowValue(item, header) }}
+                </slot>
+              </td>
+              <template v-if="headers.length < filteredHeaders.length">
+                <td
+                  class="v-table__item"
+                  v-for="rest in filteredHeaders.length - headers.length"
+                  :key="rest"
+                ></td>
               </template>
-            </td>
-          </tr>
+            </tr>
+          </template>
+          <template v-else>
+            <slot name="no-content">No table data</slot>
+          </template>
         </tbody>
       </table>
+      <!--      pagination -->
       <div v-if="isPaginationModeEnabled">
         <slot name="pagination">
           <VPagination
@@ -145,19 +185,22 @@ export default defineComponent({
       default: false,
     },
   },
-  emits: ['handle-api-sorting', 'update:modelValue'],
+  emits: ['handle-api-sorting', 'update:modelValue', 'row-click'],
   setup(props, context) {
     const currentPage = ref(1);
 
-    const getTableRowValue = (item: { [key: string]: string }, key: string) => {
-      const header: Header | undefined = props.headers.find(
-        (header: Header) => header.value === key
-      );
-      return header ? item[key] : '';
-    };
-
     const onPageChange = (page: number) => {
       currentPage.value = page;
+    };
+
+    const getTableRowValue = (item: { [key: string]: string }, header: Header) => {
+      return item[header.value] || '';
+    };
+
+    const filteredHeaders = props.headers.filter((header) => header.value && header.text);
+
+    const rowClick = (clickedItem: Item) => {
+      context.emit('row-click', clickedItem);
     };
 
     const { doSort, hasSortableIcon, getSortableNumber, getSortDirection, sortedData } =
@@ -187,6 +230,8 @@ export default defineComponent({
       isMarkedCheckbox,
       markedAllCheckboxes,
       isSomeCheckboxUnMarked,
+      rowClick,
+      filteredHeaders,
     };
   },
 });
@@ -197,6 +242,9 @@ export default defineComponent({
   border-collapse: collapse;
   min-width: 100%;
   text-align: initial;
+  position: sticky;
+  top: 0;
+  z-index: 1;
 
   thead,
   tbody,
