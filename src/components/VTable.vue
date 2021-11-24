@@ -65,7 +65,7 @@
         <tbody>
           <template v-if="sortedData.length">
             <tr v-for="(item, idx) in sortedData" :key="idx">
-              <td v-if="showSelect" class="v-table__item--selectable">
+              <td v-if="showSelect" class="v-table__item v-table__item--selectable">
                 <slot
                   name="row-select-checkbox"
                   :id="idx"
@@ -85,6 +85,7 @@
                 v-for="(header, keyIdx) in filteredHeaders"
                 :key="keyIdx"
                 class="v-table__item"
+                :data-label="header.text"
               >
                 <slot :name="`item.${header.value}`" :item="item">
                   {{ getTableRowValue(item, header) }}
@@ -330,6 +331,57 @@ export default defineComponent({
   &__item {
     &--selectable {
       width: 4.375rem;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .v-table {
+    thead {
+      border: none;
+      clip: rect(0 0 0 0);
+      height: 1px;
+      margin: -1px;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      width: 1px;
+    }
+
+    tbody {
+      tr {
+        border-bottom: 3px solid #ddd;
+        margin-bottom: 0.625em;
+        display: block;
+      }
+    }
+
+    &__item {
+      border-bottom: 1px solid #ddd;
+      display: block;
+      font-size: 0.8em;
+      text-align: right;
+
+      &--selectable {
+        margin-left: auto;
+        border: none;
+        width: 100%;
+      }
+
+      &::before {
+        /*
+          * aria-label has no advantage, it won't be read inside a table
+          content: attr(aria-label);
+        */
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      &:last-child {
+        border-bottom: 0;
+      }
     }
   }
 }
