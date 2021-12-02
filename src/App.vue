@@ -47,7 +47,7 @@
       <!--      </template>-->
       <template #[`item.management`]="slotsProps">
         <button @click.stop="managementClick(slotsProps.item)">Click me</button>
-        <button @click.stop="managementClick(slotsProps.item)">Click me</button>
+        <!--        <button @click.stop="managementClick(slotsProps.item)">Click me</button>-->
       </template>
     </VTable>
   </div>
