@@ -26,7 +26,9 @@ export const VueColumnsResizable = (el: HTMLElement) => {
 
   const updateColumnSizes = (columns: Column[]) => {
     const gridTemplateColumns: string = columns
-      .map(({ size }) => (size === 'auto' ? 'auto' : `minmax(${size}, 1fr)`))
+      .map(({ size }) =>
+        size === 'auto' ? 'auto' : size.includes('minmax') ? size : `minmax(${size}, 1fr)`
+      )
       .join(' ');
     thead.style.gridTemplateColumns = gridTemplateColumns;
 
