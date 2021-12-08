@@ -7,7 +7,6 @@ export const VueColumnsResizable = (el: HTMLElement) => {
   const thead: HTMLElement | null = el.querySelector('thead');
   if (!thead) return;
   const ths = el.querySelectorAll('th'); // header items
-  const tbodyTrs = el.querySelectorAll<HTMLElement>('tbody tr'); // tr content
 
   const min = 150; // minimum size of column that can be reached if we resize column
   // The max (fr) values for grid-template-columns
@@ -32,6 +31,7 @@ export const VueColumnsResizable = (el: HTMLElement) => {
       .join(' ');
     thead.style.gridTemplateColumns = gridTemplateColumns;
 
+    const tbodyTrs = el.querySelectorAll<HTMLElement>('tbody tr'); // tr content
     tbodyTrs.forEach((tr) => {
       tr.style.gridTemplateColumns = gridTemplateColumns;
     });
@@ -132,4 +132,8 @@ export const VueColumnsResizable = (el: HTMLElement) => {
 
   // To apply width inline style prop if is passed to header element.
   updateColumnSizes(columns);
+
+  el.addEventListener('DOMSubtreeModified', () => {
+    updateColumnSizes(columns);
+  });
 };
