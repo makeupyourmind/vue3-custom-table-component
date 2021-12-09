@@ -31,6 +31,8 @@ import VTable from '@makeupyourmind/vue3-table-component';
 ### data
 
 ```js
+const selected = ref([]);
+
 const headers = reactive([
   {
     text: 'Dessert (100g serving)', // Text that will be dipslayed in header
