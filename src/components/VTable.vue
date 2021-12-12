@@ -70,12 +70,12 @@
                   name="row-select-checkbox"
                   :id="idx"
                   :change="onCheckboxChange"
-                  :checked="markedAllCheckboxes"
+                  :checked="markedAllCheckboxes || isMarkedCheckbox(item)"
                   :clickedItem="item"
                 >
                   <VCheckbox
                     :id="idx"
-                    :checked="markedAllCheckboxes"
+                    :checked="markedAllCheckboxes || isMarkedCheckbox(item)"
                     @change="onCheckboxChange(item)"
                   />
                 </slot>
@@ -208,8 +208,13 @@ export default defineComponent({
       settings,
     });
 
-    const { selectAllCheckboxes, onCheckboxChange, markedAllCheckboxes, isSomeCheckboxUnMarked } =
-      useRowSelection(props, context, { sortedData });
+    const {
+      selectAllCheckboxes,
+      onCheckboxChange,
+      markedAllCheckboxes,
+      isSomeCheckboxUnMarked,
+      isMarkedCheckbox,
+    } = useRowSelection(props, context, { sortedData });
 
     return {
       doSort,
@@ -222,6 +227,7 @@ export default defineComponent({
       isSomeCheckboxUnMarked,
       rowClick,
       settings,
+      isMarkedCheckbox,
     };
   },
 });
