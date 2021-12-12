@@ -39,14 +39,9 @@ export const useRowSelection = (
     context.emit('update:modelValue', value);
   };
 
-  const isMarkedCheckbox = (item: Item) => {
-    return props.modelValue.includes(item);
-  };
-
   return {
     selectAllCheckboxes,
     onCheckboxChange,
-    isMarkedCheckbox,
     markedAllCheckboxes,
     isSomeCheckboxUnMarked,
   };

@@ -28,7 +28,7 @@
               </slot>
             </th>
             <th
-              v-for="(header, idx) in filteredHeaders"
+              v-for="(header, idx) in settings.headers"
               :key="idx"
               class="v-table__header"
               :style="{ width: header.width }"
@@ -37,7 +37,7 @@
                 :name="`header.${header.value}.content`"
                 :header="header"
                 :doSort="header.sortable ? doSort : false"
-                :has-sortable-icon="hasSortableIcon(header.value)"
+                :has-sortable-icon="header.hasSortableIcon"
               >
                 <span
                   :class="{
@@ -49,11 +49,11 @@
                     {{ header.text }}
                   </span>
                   <VIcon
-                    v-if="header.sortable && hasSortableIcon(header.value)"
-                    :icon="getSortDirection(header.value)"
+                    v-if="header.sortable && header.hasSortableIcon"
+                    :icon="header.sortDirection"
                   />
-                  <span v-if="hasSortableIcon(header.value)">{{
-                    getSortableNumber(header.value) + 1
+                  <span v-if="header.sortable && header.hasSortableIcon">{{
+                    header.sortOrderNumber
                   }}</span>
                 </span>
               </slot>
@@ -70,31 +70,32 @@
                   name="row-select-checkbox"
                   :id="idx"
                   :change="onCheckboxChange"
-                  :checked="markedAllCheckboxes || isMarkedCheckbox(item)"
+                  :checked="markedAllCheckboxes"
                   :clickedItem="item"
                 >
                   <VCheckbox
                     :id="idx"
-                    :checked="markedAllCheckboxes || isMarkedCheckbox(item)"
+                    :checked="markedAllCheckboxes"
                     @change="onCheckboxChange(item)"
                   />
                 </slot>
               </td>
               <td
                 @click="rowClick(item)"
-                v-for="(header, keyIdx) in filteredHeaders"
+                v-for="(header, keyIdx) in settings.headers"
                 :key="keyIdx"
                 class="v-table__item"
                 :data-label="header.text"
               >
                 <slot :name="`item.${header.value}`" :item="item">
-                  {{ getTableRowValue(item, header) }}
+                  {{ item[header.value] || '' }}
                 </slot>
               </td>
-              <template v-if="headers.length < filteredHeaders.length">
+              <!-- Fill empty cells             -->
+              <template v-if="headers.length < settings.headers.length">
                 <td
                   class="v-table__item"
-                  v-for="rest in filteredHeaders.length - headers.length"
+                  v-for="rest in settings.headers.length - headers.length"
                   :key="rest"
                 ></td>
               </template>
@@ -121,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, ref } from 'vue';
+import { defineComponent, PropType, reactive, ref } from 'vue';
 
 import VLoader from '@/components/VLoader.vue';
 import VPagination from '@/components/VPagination.vue';
@@ -188,51 +189,39 @@ export default defineComponent({
   },
   emits: ['handle-api-sorting', 'update:modelValue', 'row-click'],
   setup(props, context) {
+    const settings = reactive({
+      headers: [...props.headers].filter((header) => header.value && header.text),
+    });
+
     const currentPage = ref(1);
 
     const onPageChange = (page: number) => {
       currentPage.value = page;
     };
 
-    const getTableRowValue = (item: { [key: string]: string }, header: Header) => {
-      return item[header.value] || '';
-    };
-
-    const filteredHeaders = props.headers.filter((header) => header.value && header.text);
-
     const rowClick = (clickedItem: Item) => {
       context.emit('row-click', clickedItem);
     };
 
-    const { doSort, hasSortableIcon, getSortableNumber, getSortDirection, sortedData } =
-      useSortable(props, context, {
-        currentPage,
-      });
+    const { doSort, sortedData } = useSortable(props, context, {
+      currentPage,
+      settings,
+    });
 
-    const {
-      selectAllCheckboxes,
-      onCheckboxChange,
-      isMarkedCheckbox,
-      markedAllCheckboxes,
-      isSomeCheckboxUnMarked,
-    } = useRowSelection(props, context, { sortedData });
+    const { selectAllCheckboxes, onCheckboxChange, markedAllCheckboxes, isSomeCheckboxUnMarked } =
+      useRowSelection(props, context, { sortedData });
 
     return {
-      getTableRowValue,
       doSort,
       sortedData,
-      getSortDirection,
-      hasSortableIcon,
-      getSortableNumber,
       currentPage,
       onPageChange,
       selectAllCheckboxes,
       onCheckboxChange,
-      isMarkedCheckbox,
       markedAllCheckboxes,
       isSomeCheckboxUnMarked,
       rowClick,
-      filteredHeaders,
+      settings,
     };
   },
 });

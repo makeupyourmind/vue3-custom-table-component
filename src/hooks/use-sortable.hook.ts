@@ -6,26 +6,63 @@ import {
   transformSortableFieldsOrderToSqlFormat,
   transformToFieldsWithSortingSign,
 } from '@/utils/utils';
-import { Item, SortableField, SortedItem } from '@/types';
+import { Header, Item, SortableField, SortedItem } from '@/types';
 
 export const useSortable = (
   props: any,
   context: any,
-  { currentPage }: { currentPage: Ref<number> }
+  { currentPage, settings }: { currentPage: Ref<number>; settings: { headers: Header[] } }
 ) => {
   const sortableFields: SortableField[] = reactive([]);
 
   const doSort = (field: string) => {
     const indexOfSearchableField = sortableFieldsManipulations('findIndex', field);
     if (indexOfSearchableField !== -1) {
-      const sortableField: SortableField = sortableFields[indexOfSearchableField];
-      sortableField.order === ASC
-        ? (sortableField.order = DESC)
+      const sortableFieldByIndex: SortableField = sortableFields[indexOfSearchableField];
+      sortableFieldByIndex.order === ASC
+        ? (sortableFieldByIndex.order = DESC)
         : sortableFields.splice(indexOfSearchableField, 1);
     } else {
       sortableFields.push({
         field,
         order: ASC,
+      });
+    }
+
+    const sortableField = sortableFieldsManipulations('find', field);
+
+    if (sortableField) {
+      // eslint-disable-next-line prefer-spread
+      const maxSortOrderNumber = Math.max.apply(
+        Math,
+        settings.headers.map((header: Header) => header.sortOrderNumber || 0)
+      );
+
+      settings.headers = settings.headers.map((header: Header) => {
+        if (header.value === field) {
+          const sortDirectionOrder = sortableField.order === ASC ? 'up' : 'down';
+          return {
+            ...header,
+            hasSortableIcon: true,
+            sortDirection: `sort-${sortDirectionOrder}`,
+            sortOrderNumber: header.sortOrderNumber
+              ? header.sortOrderNumber
+              : maxSortOrderNumber + 1,
+          };
+        }
+        return header;
+      });
+    } else {
+      settings.headers = settings.headers.map((header: Header) => {
+        if (header.value === field) {
+          return {
+            ...header,
+            hasSortableIcon: false,
+            sortDirection: '',
+            sortOrderNumber: 0,
+          };
+        }
+        return header;
       });
     }
 
@@ -41,20 +78,6 @@ export const useSortable = (
     );
   };
 
-  const hasSortableIcon = (field: string) => {
-    return !!sortableFieldsManipulations('find', field);
-  };
-
-  const getSortableNumber = (field: string) => {
-    return sortableFieldsManipulations('findIndex', field);
-  };
-
-  const getSortDirection = (field: string) => {
-    const sortableField: SortableField | undefined = sortableFieldsManipulations('find', field);
-    const order = sortableField?.order === ASC ? 'up' : 'down';
-    return `sort-${order}`;
-  };
-
   const sortableFieldsManipulations = (method: string, field: string) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -68,7 +91,8 @@ export const useSortable = (
 
     if (
       (isPaginationModeEnabled && useCustomPagination) ||
-      (useApiSorting && isPaginationModeEnabled && useCustomPagination)
+      (useApiSorting && isPaginationModeEnabled && useCustomPagination) ||
+      !useApiSorting
     ) {
       return items;
     }
@@ -89,9 +113,6 @@ export const useSortable = (
 
   return {
     doSort,
-    hasSortableIcon,
-    getSortableNumber,
-    getSortDirection,
     sortedData,
   };
 };
