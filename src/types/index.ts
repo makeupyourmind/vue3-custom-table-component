@@ -21,7 +21,7 @@ export type SortableField = {
 };
 
 export type GeneralObject = {
-  [key: string]: string | number;
+  [key: string]: string | number | boolean;
 };
 
 export type Item = GeneralObject;

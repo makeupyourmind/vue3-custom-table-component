@@ -125,6 +125,16 @@ export default defineComponent({
       },
     ]);
 
+    setTimeout(() => {
+      desserts.push({
+        name: 'Lollipop2',
+        calories: 392,
+        fat: 0.2,
+        carbs: 98,
+        management: 'f',
+      });
+    }, 1000);
+
     const handleApiSorting = (sortedFields: SortableField[]) => {
       console.log('handleApiSorting', sortedFields);
     };

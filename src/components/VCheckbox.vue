@@ -36,15 +36,14 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props) {
+  emits: ['checkbox-changed'],
+  setup(props, context) {
     const checkboxId = computed(() => {
       return `v-checkbox-id-${props.id}`;
     });
 
-    const onChange = (e: Event) => {
-      if (props.checked) {
-        (e.target as HTMLInputElement).checked = props.checked;
-      }
+    const onChange = () => {
+      context.emit('checkbox-changed', props.checked);
     };
 
     return {

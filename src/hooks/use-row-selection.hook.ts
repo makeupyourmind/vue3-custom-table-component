@@ -1,4 +1,4 @@
-import { computed, ComputedRef } from 'vue';
+import { computed, ComputedRef, reactive, watch } from 'vue';
 
 import { Item } from '@/types';
 import { findObjectIndex } from '@/utils/utils';
@@ -8,6 +8,21 @@ export const useRowSelection = (
   context: any,
   { sortedData }: { sortedData: ComputedRef<Item[]> }
 ) => {
+  const checkboxesState = reactive(new Map());
+
+  watch(
+    sortedData,
+    (currentSortedData) => {
+      currentSortedData.forEach((data) => {
+        const value = checkboxesState.get(data) !== undefined ? checkboxesState.get(data) : false;
+        checkboxesState.set(data, value);
+      });
+    },
+    {
+      immediate: true,
+    }
+  );
+
   const markedAllCheckboxes = computed(() => {
     return sortedData.value.length === props.modelValue.length;
   });
@@ -17,12 +32,18 @@ export const useRowSelection = (
     return !markedAllCheckboxes.value;
   });
 
-  const selectAllCheckboxes = () => {
+  const selectAllCheckboxes = (flag: boolean) => {
     const value = markedAllCheckboxes.value ? [] : sortedData.value;
+    for (const key of checkboxesState.keys()) {
+      checkboxesState.set(key, !flag);
+    }
     updateSelectedItems(value);
   };
 
   const onCheckboxChange = (newItem: Item) => {
+    const checkboxState = checkboxesState.get(newItem);
+    checkboxesState.set(newItem, !checkboxState);
+
     const indexOfItem = findObjectIndex(props.modelValue, newItem);
     const modelValue = [...props.modelValue];
     if (indexOfItem !== -1) {
@@ -39,15 +60,11 @@ export const useRowSelection = (
     context.emit('update:modelValue', value);
   };
 
-  const isMarkedCheckbox = (item: Item) => {
-    return props.modelValue.includes(item);
-  };
-
   return {
     selectAllCheckboxes,
     onCheckboxChange,
     markedAllCheckboxes,
     isSomeCheckboxUnMarked,
-    isMarkedCheckbox,
+    checkboxesState,
   };
 };
