@@ -56,6 +56,8 @@
 <script lang="ts">
 import { ref, reactive, defineComponent, watch } from 'vue';
 
+import { ASC } from './constants';
+
 import { Item, SortableField } from '@/types';
 import VTable from '@/components/VTable.vue';
 // import VCheckbox from '@/components/VCheckbox.vue';
@@ -80,6 +82,7 @@ export default defineComponent({
         sortable: true,
         resizable: true,
         width: '360px',
+        defaultSort: ASC,
       },
       {
         text: 'Fat (g)',

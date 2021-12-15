@@ -15,7 +15,7 @@ export const useSortable = (
 ) => {
   const sortableFields: SortableField[] = reactive([]);
 
-  const doSort = (field: string) => {
+  const doSort = (field: string, sortDirection = ASC) => {
     const indexOfSearchableField = sortableFieldsManipulations('findIndex', field);
     if (indexOfSearchableField !== -1) {
       const sortableFieldByIndex: SortableField = sortableFields[indexOfSearchableField];
@@ -25,7 +25,7 @@ export const useSortable = (
     } else {
       sortableFields.push({
         field,
-        order: ASC,
+        order: sortDirection,
       });
     }
 

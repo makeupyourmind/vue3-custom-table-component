@@ -49,6 +49,7 @@ const headers = reactive([
     sortable: true,
     resizable: true,
     width: '360px',
+    defaultSort: 'asc|desc|ASC|DESC',
   },
   {
     text: 'Fat (g)',
@@ -111,6 +112,7 @@ const desserts = reactive([
 | `sortable`  | No | `false`  | Sortable field |
 | `resizable`  | No | `false`  | Resizable field |
 | `width`  | No | null | Use custom width for column |
+| `defaultSort`  | No | null | Default sorting for specific field |
 
 
 ### Slots

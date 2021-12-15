@@ -122,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive, ref } from 'vue';
+import { defineComponent, PropType, reactive, ref, onMounted } from 'vue';
 
 import VLoader from '@/components/VLoader.vue';
 import VPagination from '@/components/VPagination.vue';
@@ -206,6 +206,15 @@ export default defineComponent({
     const { doSort, sortedData } = useSortable(props, context, {
       currentPage,
       settings,
+    });
+
+    onMounted(() => {
+      props.headers
+        .filter((header: Header) => header.defaultSort)
+        .map(({ value, defaultSort }) => ({ value, defaultSort }))
+        .forEach((item) => {
+          doSort(item.value, item.defaultSort);
+        });
     });
 
     const {

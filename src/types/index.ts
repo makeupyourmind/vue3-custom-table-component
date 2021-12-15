@@ -4,6 +4,7 @@ export type Header = {
   sortable?: boolean;
   resizable?: boolean;
   width?: string;
+  defaultSort?: string;
   hasSortableIcon?: boolean;
   sortDirection?: string;
   sortOrderNumber?: number;
