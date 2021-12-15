@@ -209,11 +209,12 @@ export default defineComponent({
     });
 
     onMounted(() => {
-      props.headers
+      // Apply default sort for some specific column.
+      settings.headers
         .filter((header: Header) => header.defaultSort)
         .map(({ value, defaultSort }) => ({ value, defaultSort }))
         .forEach((item) => {
-          doSort(item.value, item.defaultSort);
+          doSort(item.value, item.defaultSort?.toUpperCase());
         });
     });
 

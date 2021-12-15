@@ -112,7 +112,7 @@ const desserts = reactive([
 | `sortable`  | No | `false`  | Sortable field |
 | `resizable`  | No | `false`  | Resizable field |
 | `width`  | No | null | Use custom width for column |
-| `defaultSort`  | No | null | Default sorting for specific field |
+| `defaultSort`  | No | null | Default sorting for specific field. Example `asc`, `ASC`, `desc`, `DESC` |
 
 
 ### Slots
