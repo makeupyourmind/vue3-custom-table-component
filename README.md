@@ -25,6 +25,7 @@ import VTable from '@makeupyourmind/vue3-table-component';
     single-select
     show-select
     @handle-api-sorting="handleApiSorting"
+    @row-click="rowClick"
   />
 ````
 
@@ -159,6 +160,29 @@ export default {
     
         return {
           handleApiSorting
+        }
+    }
+}
+```
+
+### @row-click - Handle row click. As param would be the clicked item.
+```vue
+<VTable
+  ...restProps
+  @row-click="rowClick"
+>
+</VTable>
+```
+
+```js
+export default {
+    setup() {
+        const rowClick = (clickedItem) => {
+          console.log('row click', clickedItem);
+        };
+    
+        return {
+          rowClick
         }
     }
 }
