@@ -133,7 +133,19 @@ export const VueColumnsResizable = (el: HTMLElement) => {
   // To apply width inline style prop if is passed to header element.
   updateColumnSizes(columns);
 
-  el.addEventListener('DOMSubtreeModified', () => {
-    updateColumnSizes(columns);
-  });
+  const config = {
+    childList: true,
+    subtree: true,
+  };
+
+  const mutationObserverCallback = (mutationsList: MutationRecord[]) => {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'childList') {
+        updateColumnSizes(columns);
+      }
+    }
+  };
+
+  const recordTableUpdatedObserver = new MutationObserver(mutationObserverCallback);
+  recordTableUpdatedObserver.observe(el, config);
 };
