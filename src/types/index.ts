@@ -8,6 +8,11 @@ export type Header = {
   hasSortableIcon?: boolean;
   sortDirection?: string;
   sortOrderNumber?: number;
+  style?: {
+    className: string | string[];
+    expectedValue: number | string;
+    condition: string;
+  };
 };
 
 export type Column = {
@@ -30,5 +35,6 @@ export type Item = GeneralObject;
 export type SortedItem = GeneralObject & {
   settings: {
     isChecked?: boolean;
+    classes?: string;
   };
 };

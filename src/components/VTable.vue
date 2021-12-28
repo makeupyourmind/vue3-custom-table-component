@@ -67,7 +67,11 @@
             <tr
               v-for="(item, idx) in sortedData"
               :key="idx"
-              :class="['v-table__row', { 'v-table__row--checked': item.settings.isChecked }]"
+              :class="[
+                'v-table__row',
+                { 'v-table__row--checked': item.settings.isChecked },
+                item.settings.classes,
+              ]"
             >
               <td v-if="showSelect" class="v-table__item v-table__item--selectable">
                 <slot
@@ -126,7 +130,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive, ref, onMounted } from 'vue';
+import { defineComponent, PropType, reactive, ref, onMounted, watch } from 'vue';
 
 import VLoader from '@/components/VLoader.vue';
 import VPagination from '@/components/VPagination.vue';
@@ -204,9 +208,30 @@ export default defineComponent({
     };
 
     const rowClick = (clickedItem: SortedItem) => {
-      // eslint-disable-next-line no-unused-vars
       const { settings, ...rest } = clickedItem;
       context.emit('row-click', rest);
+    };
+
+    const getRowClasses = (item: SortedItem) => {
+      let styles: string[] = [];
+      Object.keys(item).forEach((key) => {
+        const header = settings.headers.find((header) => header.value === key);
+        if (header?.style) {
+          const itemValue = item[header.value];
+          const expectedItemValue = header.style.expectedValue;
+          const condition = header.style.condition;
+          if (!itemValue || !expectedItemValue || !condition) return;
+
+          const isValid = eval(`${itemValue} ${condition} ${expectedItemValue}`);
+          if (isValid) {
+            const className = Array.isArray(header.style.className)
+              ? header.style.className.join(' ')
+              : header.style.className;
+            styles.push(className);
+          }
+        }
+      });
+      return styles.join(' ');
     };
 
     const { doSort, sortedData } = useSortable(props, context, {
@@ -222,6 +247,12 @@ export default defineComponent({
         .forEach((item) => {
           doSort(item.value, item.defaultSort?.toUpperCase());
         });
+    });
+
+    watch(sortedData, (currentSortedData) => {
+      currentSortedData.forEach((sortedItem: SortedItem) => {
+        sortedItem.settings.classes = getRowClasses(sortedItem);
+      });
     });
 
     const { selectAllCheckboxes, onCheckboxChange, markedAllCheckboxes, isSomeCheckboxUnMarked } =

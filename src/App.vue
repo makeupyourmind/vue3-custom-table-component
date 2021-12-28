@@ -83,10 +83,20 @@ export default defineComponent({
         resizable: true,
         width: '360px',
         defaultSort: ASC,
+        style: {
+          className: 'calories-class',
+          expectedValue: 220,
+          condition: '>',
+        },
       },
       {
         text: 'Fat (g)',
         value: 'fat',
+        style: {
+          className: ['fat-class', 'one-more-class'],
+          expectedValue: 6,
+          condition: '>',
+        },
       },
       {
         text: 'Carbs (g)',

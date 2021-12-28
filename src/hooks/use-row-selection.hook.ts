@@ -21,8 +21,8 @@ export const useRowSelection = (
     const value = markedAllCheckboxes.value ? [] : sortedData.value;
     updateSelectedItems(value);
 
-    sortedData.value.forEach((item: SortedItem) => {
-      item.settings.isChecked = !flag;
+    sortedData.value.forEach((sortedItem: SortedItem) => {
+      sortedItem.settings.isChecked = !flag;
     });
   };
 

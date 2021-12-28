@@ -51,6 +51,11 @@ const headers = reactive([
     resizable: true,
     width: '360px',
     defaultSort: 'asc|desc|ASC|DESC',
+    style: {
+      className: 'calories-class' | ['calories-class', 'one-more-class'],
+      expectedValue: 250,
+      condition: '>',
+    },
   },
   {
     text: 'Fat (g)',
@@ -114,6 +119,7 @@ const desserts = reactive([
 | `resizable`  | No | `false`  | Resizable field |
 | `width`  | No | null | Use custom width for column |
 | `defaultSort`  | No | null | Default sorting for specific field. Example `asc`, `ASC`, `desc`, `DESC` |
+| `style`  | No | null | Apply custom class by some condition |
 
 
 ### Slots
@@ -180,7 +186,7 @@ export default {
         const rowClick = (clickedItem) => {
           console.log('row click', clickedItem);
         };
-    
+
         return {
           rowClick
         }
