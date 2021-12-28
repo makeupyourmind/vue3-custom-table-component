@@ -86,6 +86,10 @@ export const useSortable = (
 
   const sortedData: ComputedRef<SortedItem[]> = computed(() => {
     const { useApiSorting, isPaginationModeEnabled, items } = props;
+    const clonedItems = JSON.parse(JSON.stringify(items));
+    clonedItems.forEach((el: SortedItem) => {
+      el.settings = {};
+    });
     // check if user wants to use custom pagination
     const useCustomPagination = !!context.slots.pagination;
 
@@ -94,19 +98,19 @@ export const useSortable = (
       (useApiSorting && isPaginationModeEnabled && useCustomPagination) ||
       !useApiSorting
     ) {
-      return items;
+      return clonedItems;
     }
 
     if (
       (isPaginationModeEnabled && !useCustomPagination) ||
       (useApiSorting && isPaginationModeEnabled && !useCustomPagination)
     ) {
-      return sliceArrayForPagination(items).sort(
+      return sliceArrayForPagination(clonedItems).sort(
         dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields))
       );
     }
 
-    return [...items].sort(
+    return [...clonedItems].sort(
       dynamicSortMultiple(...transformToFieldsWithSortingSign(sortableFields))
     );
   });

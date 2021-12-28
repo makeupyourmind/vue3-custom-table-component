@@ -27,4 +27,8 @@ export type GeneralObject = {
 
 export type Item = GeneralObject;
 
-export type SortedItem = GeneralObject;
+export type SortedItem = GeneralObject & {
+  settings: {
+    isChecked?: boolean;
+  };
+};

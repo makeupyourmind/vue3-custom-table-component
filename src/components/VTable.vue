@@ -64,18 +64,22 @@
         <!--        table body-->
         <tbody>
           <template v-if="sortedData.length">
-            <tr v-for="(item, idx) in sortedData" :key="idx">
+            <tr
+              v-for="(item, idx) in sortedData"
+              :key="idx"
+              :class="['v-table__row', { 'v-table__row--checked': item.settings.isChecked }]"
+            >
               <td v-if="showSelect" class="v-table__item v-table__item--selectable">
                 <slot
                   name="row-select-checkbox"
                   :id="idx"
                   :change="onCheckboxChange"
-                  :checked="markedAllCheckboxes || checkboxesState.get(item)"
+                  :checked="markedAllCheckboxes || item.settings.isChecked"
                   :clickedItem="item"
                 >
                   <VCheckbox
                     :id="idx"
-                    :checked="markedAllCheckboxes || checkboxesState.get(item)"
+                    :checked="markedAllCheckboxes || item.settings.isChecked"
                     @change="onCheckboxChange(item)"
                   />
                 </slot>
@@ -131,7 +135,7 @@ import VCheckbox from '@/components/VCheckbox.vue';
 import { VueColumnsResizable } from '@/plugins/directives';
 import { useRowSelection } from '@/hooks/use-row-selection.hook';
 import { useSortable } from '@/hooks/use-sortable.hook';
-import { Header, Item } from '@/types';
+import { Header, Item, SortedItem } from '@/types';
 
 export default defineComponent({
   name: 'VTable',
@@ -199,8 +203,10 @@ export default defineComponent({
       currentPage.value = page;
     };
 
-    const rowClick = (clickedItem: Item) => {
-      context.emit('row-click', clickedItem);
+    const rowClick = (clickedItem: SortedItem) => {
+      // eslint-disable-next-line no-unused-vars
+      const { settings, ...rest } = clickedItem;
+      context.emit('row-click', rest);
     };
 
     const { doSort, sortedData } = useSortable(props, context, {
@@ -218,13 +224,8 @@ export default defineComponent({
         });
     });
 
-    const {
-      selectAllCheckboxes,
-      onCheckboxChange,
-      markedAllCheckboxes,
-      isSomeCheckboxUnMarked,
-      checkboxesState,
-    } = useRowSelection(props, context, { sortedData });
+    const { selectAllCheckboxes, onCheckboxChange, markedAllCheckboxes, isSomeCheckboxUnMarked } =
+      useRowSelection(props, context, { sortedData });
 
     const selectAllCheckboxChanged = (val: boolean) => {
       selectAllCheckboxes(val);
@@ -241,7 +242,6 @@ export default defineComponent({
       isSomeCheckboxUnMarked,
       rowClick,
       settings,
-      checkboxesState,
       selectAllCheckboxChanged,
     };
   },

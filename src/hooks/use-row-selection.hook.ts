@@ -1,28 +1,13 @@
-import { computed, ComputedRef, reactive, watch } from 'vue';
+import { computed, ComputedRef } from 'vue';
 
-import { Item } from '@/types';
+import { Item, SortedItem } from '@/types';
 import { findObjectIndex } from '@/utils/utils';
 
 export const useRowSelection = (
   props: any,
   context: any,
-  { sortedData }: { sortedData: ComputedRef<Item[]> }
+  { sortedData }: { sortedData: ComputedRef<SortedItem[]> }
 ) => {
-  const checkboxesState = reactive(new Map());
-
-  watch(
-    sortedData,
-    (currentSortedData) => {
-      currentSortedData.forEach((data) => {
-        const value = checkboxesState.get(data) !== undefined ? checkboxesState.get(data) : false;
-        checkboxesState.set(data, value);
-      });
-    },
-    {
-      immediate: true,
-    }
-  );
-
   const markedAllCheckboxes = computed(() => {
     return sortedData.value.length === props.modelValue.length;
   });
@@ -34,18 +19,21 @@ export const useRowSelection = (
 
   const selectAllCheckboxes = (flag: boolean) => {
     const value = markedAllCheckboxes.value ? [] : sortedData.value;
-    for (const key of checkboxesState.keys()) {
-      checkboxesState.set(key, !flag);
-    }
     updateSelectedItems(value);
+
+    sortedData.value.forEach((item: SortedItem) => {
+      item.settings.isChecked = !flag;
+    });
   };
 
   const onCheckboxChange = (newItem: Item) => {
-    const checkboxState = checkboxesState.get(newItem);
-    checkboxesState.set(newItem, !checkboxState);
-
     const indexOfItem = findObjectIndex(props.modelValue, newItem);
     const modelValue = [...props.modelValue];
+
+    const toggledItemIndex = findObjectIndex(sortedData.value, newItem);
+    sortedData.value[toggledItemIndex].settings.isChecked =
+      !sortedData.value[toggledItemIndex].settings.isChecked;
+
     if (indexOfItem !== -1) {
       modelValue.splice(indexOfItem, 1);
       updateSelectedItems(modelValue);
@@ -65,6 +53,5 @@ export const useRowSelection = (
     onCheckboxChange,
     markedAllCheckboxes,
     isSomeCheckboxUnMarked,
-    checkboxesState,
   };
 };
