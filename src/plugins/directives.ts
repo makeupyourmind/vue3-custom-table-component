@@ -1,14 +1,17 @@
 import { Column } from '@/types';
+import { MIN_SIZE_OF_COLUMN } from '@/constants';
+import { fillGridTemplateSizeForHeaderItem } from '@/utils/utils';
+import { useTableMutationObserverHook } from '@/hooks/use-table-mutation-observer.hook';
 
 export const VueColumnsResizable = (el: HTMLElement) => {
+  const gridTemplateSizesAccumulator: string[] = [];
   const nodeName = el.nodeName;
   if (['TABLE', 'THEAD'].indexOf(nodeName) < 0) return;
 
   const thead: HTMLElement | null = el.querySelector('thead');
   if (!thead) return;
-  const ths = el.querySelectorAll('th'); // header items
+  const ths = thead.querySelectorAll('th'); // header items
 
-  const min = 150; // minimum size of column that can be reached if we resize column
   // The max (fr) values for grid-template-columns
   const columnTypeToRatioMap: { [key: string]: number } = {
     'number': 1,
@@ -17,60 +20,60 @@ export const VueColumnsResizable = (el: HTMLElement) => {
   };
 
   /*
-    The following will soon be filled with column objects containing
-    the header element and their size value for grid-template-columns
-  */
-  const columns: Column[] = [];
+      The following will soon be filled with column objects containing
+      the header element and their size value for grid-template-columns
+    */
+  let columns: Column[] = [];
   let headerBeingResized: HTMLElement | null;
 
-  const updateColumnSizes = (columns: Column[]) => {
-    const gridTemplateColumns: string = columns
-      .map(({ size }) =>
-        size === 'auto' ? 'auto' : size.includes('minmax') ? size : `minmax(${size}, 1fr)`
-      )
-      .join(' ');
-    thead.style.gridTemplateColumns = gridTemplateColumns;
-
+  /**
+   * Apply grid template columns style for thead and
+   * every tbody tr (add grid-template-columns style).
+   *
+   * @param {Array} sizes - Array of sizes.
+   */
+  const applyGridStylesForTable = (sizes: string[]) => {
+    thead.style.gridTemplateColumns = sizes.join(' ');
     const tbodyTrs = el.querySelectorAll<HTMLElement>('tbody tr'); // tr content
     tbodyTrs.forEach((tr) => {
-      tr.style.gridTemplateColumns = gridTemplateColumns;
+      tr.style.gridTemplateColumns = sizes.join(' ');
     });
   };
 
-  // The next three functions are mouse event callbacks
-
-  // Where the magic happens. I.e. when they're actually resizing
-  const onMouseMove = (e: MouseEvent) => {
+  const onMouseMove = (e: MouseEvent) =>
     requestAnimationFrame(() => {
-      // console.log('onMouseMove');
-      // Calculate the desired width
       const horizontalScrollOffset = document.documentElement.scrollLeft;
       const width = horizontalScrollOffset + e.clientX - (headerBeingResized?.offsetLeft || 0);
 
       // Update the column object with the new size value
-      const column: Column | undefined = columns.find(
-        ({ header }) => header === headerBeingResized
-      );
-      if (column) {
-        const minSizeOfColumn = column.customMinSize ? parseInt(column.customMinSize) : min;
-        column.size = Math.max(minSizeOfColumn, width) + 'px'; // Enforce our minimum
-      }
+      const column = columns.find(({ header }) => header === headerBeingResized);
+      if (!column) return;
+      column.size = Math.max(MIN_SIZE_OF_COLUMN, width) + 'px'; // Enforce our minimum
 
+      const minAllowedWidth = column.customMinSize
+        ? parseInt(column.customMinSize)
+        : MIN_SIZE_OF_COLUMN;
+
+      if (width < Math.max(minAllowedWidth, parseInt(column.size))) return;
       // For the other headers which don't have a set width, fix it to their computed width
       columns.forEach((column) => {
         if (column.size.startsWith('minmax')) {
           // isn't fixed yet (it would be a pixel value otherwise)
-          column.size = parseInt(String(column.header.clientWidth), 10) + 'px';
+          column.size = parseInt(`${column.header.clientWidth}`, 10) + 'px';
         }
       });
 
       /*
         Update the column sizes
         Reminder: grid-template-columns sets the width for all columns in one value
-      */
-      updateColumnSizes(columns);
+        */
+      const gridTemplateColumns = columns.map((column) => column.size);
+
+      // set width style for header.
+      (column.header as HTMLElement).style.width = `${width}px`;
+
+      applyGridStylesForTable(gridTemplateColumns);
     });
-  };
 
   // Clean up event listeners, classes, etc.
   const onMouseUp = () => {
@@ -83,7 +86,6 @@ export const VueColumnsResizable = (el: HTMLElement) => {
 
   // Get ready, they're about to resize
   const initResize = (e: MouseEvent) => {
-    // console.log('initResize');
     if (!e.target) return;
     headerBeingResized = (e.target as HTMLElement).parentNode as HTMLElement;
     window.addEventListener('mousemove', onMouseMove);
@@ -91,61 +93,59 @@ export const VueColumnsResizable = (el: HTMLElement) => {
     headerBeingResized && headerBeingResized.classList.add('header--being-resized');
   };
 
-  // Let's populate that columns array and add listeners to the resize handles
-  ths.forEach((header: HTMLElement, idx) => {
-    const max = (header.dataset.type ? columnTypeToRatioMap[header.dataset.type] : 1) + 'fr';
+  const theadGridTemplateColumns = thead.style.gridTemplateColumns.split(' ').filter((v) => !!v);
 
-    const headerStyles = header.style;
-    const useCustomWidth = headerStyles[0] === 'width';
-    const gridTemplateColumnsStyle = thead.style.gridTemplateColumns;
-    // If el is selectable (has a checkbox)
-    const isHeaderHasCheckbox = [...header.classList].includes('v-table__header--selectable');
-    let minSize = `${min}px`;
+  const handleTableTrs = (ths: NodeListOf<HTMLTableCellElement>) => {
+    ths.forEach((header: HTMLElement, idx: number) => {
+      const { useCustomWidth } = fillGridTemplateSizeForHeaderItem(
+        header,
+        gridTemplateSizesAccumulator,
+        ths.length
+      );
 
-    if (useCustomWidth) {
-      minSize = headerStyles.width;
-    }
+      // This part set actual header (th) width when template has been updated.
+      if (theadGridTemplateColumns.length) {
+        header.style.width = `${theadGridTemplateColumns[idx]}`;
+      }
 
-    // to keep values when do resize and click on some header item
-    if (gridTemplateColumnsStyle) {
-      const arr = gridTemplateColumnsStyle.split(' ');
-      minSize = arr[idx];
-    }
+      const max = (header.dataset.type ? columnTypeToRatioMap[header.dataset.type] : 1) + 'fr';
+      columns.push({
+        header,
+        customSize: useCustomWidth ? header.style.width : undefined,
+        customMinSize: useCustomWidth ? header.style.minWidth : undefined,
+        // The initial size value for grid-template-columns:
+        size: `minmax(${MIN_SIZE_OF_COLUMN}px, ${max})`,
+      });
 
-    const column = {} as Column;
-    column.header = header;
-    // The initial size value for grid-template-columns:
-    column.size = isHeaderHasCheckbox ? 'auto' : `minmax(${minSize}, ${max})`;
-    column.customMinSize = useCustomWidth ? headerStyles.width : undefined;
-    columns.push(column);
+      const headerHasResizeHandler = header.querySelector<HTMLElement>('.resize-handle');
 
-    // If we use custom width, we need to fill empty spaces for items, that use custom width.
-    if (useCustomWidth) {
-      headerStyles.width = 'auto';
-    }
-    const headerHasResizeHandler = header.querySelector<HTMLElement>('.resize-handle');
-
-    if (headerHasResizeHandler) {
-      headerHasResizeHandler.addEventListener('mousedown', initResize);
-    }
-  });
-
-  // To apply width inline style prop if is passed to header element.
-  updateColumnSizes(columns);
-
-  const config = {
-    childList: true,
-    subtree: true,
+      if (headerHasResizeHandler) {
+        headerHasResizeHandler.addEventListener('mousedown', initResize);
+      }
+    });
   };
 
-  const mutationObserverCallback = (mutationsList: MutationRecord[]) => {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'childList') {
-        updateColumnSizes(columns);
+  handleTableTrs(ths);
+
+  // Apply custom width on initial setup
+  if (theadGridTemplateColumns.length === 0) {
+    applyGridStylesForTable(gridTemplateSizesAccumulator);
+  } else {
+    // Apply custom width in the case when template has been updated (click on header or some a new record has been added)
+    applyGridStylesForTable(theadGridTemplateColumns);
+  }
+
+  // Observation table changes. Table thead resize
+  useTableMutationObserverHook(el, (mutationList: MutationRecord[]) => {
+    for (const mutation of mutationList) {
+      if (
+        mutation.type === 'attributes' &&
+        mutation.attributeName === 'style' &&
+        (mutation.target as HTMLElement).localName === 'thead'
+      ) {
+        columns = [];
+        handleTableTrs(thead.querySelectorAll('th'));
       }
     }
-  };
-
-  const recordTableUpdatedObserver = new MutationObserver(mutationObserverCallback);
-  recordTableUpdatedObserver.observe(el, config);
+  });
 };

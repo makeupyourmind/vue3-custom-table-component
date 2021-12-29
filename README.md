@@ -51,6 +51,7 @@ const headers = reactive([
     resizable: true,
     width: '360px',
     defaultSort: 'asc|desc|ASC|DESC',
+    fixed: true,
     style: {
       className: 'calories-class' | ['calories-class', 'one-more-class'],
       expectedValue: 250,
@@ -118,6 +119,7 @@ const desserts = reactive([
 | `sortable`  | No | `false`  | Sortable field |
 | `resizable`  | No | `false`  | Resizable field |
 | `width`  | No | null | Use custom width for column |
+| `fixed`  | No | null | Make a column fixed to the left side |
 | `defaultSort`  | No | null | Default sorting for specific field. Example `asc`, `ASC`, `desc`, `DESC` |
 | `style`  | No | null | Apply custom class by some condition |
 

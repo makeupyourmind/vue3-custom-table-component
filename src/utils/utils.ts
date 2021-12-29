@@ -1,4 +1,4 @@
-import { ASC } from '@/constants';
+import { ASC, MIN_SIZE_OF_COLUMN } from '@/constants';
 import { GeneralObject, SortableField } from '@/types';
 
 /**
@@ -30,14 +30,14 @@ export function transformSortableFieldsOrderToSqlFormat(sortableFields: Sortable
   });
 }
 
-export function dynamicSort(property: string) {
+export function dynamicSort<T, Key extends Extract<keyof T, string>>(property: Key) {
   let sortOrder = 1;
   if (property[0] === '-') {
     sortOrder = -1;
     // eslint-disable-next-line no-param-reassign
-    property = property.substr(1);
+    property = property.substr(1) as Key;
   }
-  return function (a: GeneralObject, b: GeneralObject) {
+  return function (a: T, b: T) {
     /* next line works with strings and numbers,
      * and you may want to customize it to your needs
      */
@@ -46,14 +46,14 @@ export function dynamicSort(property: string) {
   };
 }
 
-export function dynamicSortMultiple(...arg: string[]) {
+export function dynamicSortMultiple<T>(...arg: string[]) {
   /*
    * save the arguments object as it will be overwritten
    * note that arguments object is an array-like object
    * consisting of the names of the properties to sort by
    */
   const props = arg;
-  return function (obj1: GeneralObject, obj2: GeneralObject) {
+  return function (obj1: T, obj2: T) {
     const numberOfProperties = props.length;
     let i = 0,
       result = 0;
@@ -61,7 +61,8 @@ export function dynamicSortMultiple(...arg: string[]) {
      * as long as we have extra properties to compare
      */
     while (result === 0 && i < numberOfProperties) {
-      result = dynamicSort(props[i])(obj1, obj2);
+      const prop = props[i] as never;
+      result = dynamicSort(prop)(obj1, obj2);
       i += 1;
     }
     return result;
@@ -83,4 +84,77 @@ export function findObjectIndex(list: GeneralObject[], obj: GeneralObject) {
   }
 
   return -1;
+}
+
+/**
+ * Insert node after referenceNode.
+ *
+ * @param {HTMLElement} referenceNode - Reference node, after which need to insert a new node.
+ * @param {Node} newNode - A new node.
+ */
+export function insertAfter(referenceNode: Node, newNode: Node) {
+  if (referenceNode.parentNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+  }
+}
+
+/**
+ * Split array into chunks.
+ *
+ * @param {Array} arr - Array that need to be split by chunks.
+ * @param {Number} chunkSize - Size of chunk.
+ */
+export function sliceIntoChunks<T>(arr: T[], chunkSize = 10) {
+  const res = [];
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    const chunk = arr.slice(i, i + chunkSize);
+    res.push(chunk);
+  }
+  return res;
+}
+
+/**
+ * Debounce function to delay execution.
+ *
+ * @param {Function} func - Function that should be delayed.
+ * @param {number} timeout - Timeout.
+ */
+export function debounce(func: (...args: any[]) => void, timeout = 500) {
+  let timer: number;
+  return (...args: any[]) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      func(...args);
+    }, timeout);
+  };
+}
+
+/**
+ *
+ * @param headerItem
+ * @param gridTemplateSizesAccumulator
+ * @param headerLength
+ */
+export function fillGridTemplateSizeForHeaderItem(
+  headerItem: HTMLElement,
+  gridTemplateSizesAccumulator: string[],
+  headerLength: number
+) {
+  const isHeaderHasCheckbox = [...headerItem.classList].includes('v-table__header--selectable');
+  const headerStyles = headerItem.style;
+  const useCustomWidth = headerStyles[0] === 'width';
+
+  if (gridTemplateSizesAccumulator.length !== headerLength) {
+    if (isHeaderHasCheckbox) {
+      gridTemplateSizesAccumulator.push('auto');
+    } else if (useCustomWidth) {
+      gridTemplateSizesAccumulator.push(`minmax(${headerStyles.width}, ${headerStyles.width})`);
+    } else {
+      gridTemplateSizesAccumulator.push(`minmax(${MIN_SIZE_OF_COLUMN}px, 1fr)`);
+    }
+  }
+
+  return {
+    useCustomWidth,
+  };
 }

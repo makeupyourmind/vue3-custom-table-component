@@ -4,6 +4,7 @@ export type Header = {
   sortable?: boolean;
   resizable?: boolean;
   width?: string;
+  fixed?: string;
   defaultSort?: string;
   hasSortableIcon?: boolean;
   sortDirection?: string;
@@ -18,6 +19,7 @@ export type Header = {
 export type Column = {
   header: HTMLElement;
   size: string;
+  customSize?: string;
   customMinSize?: string;
 };
 
@@ -37,4 +39,11 @@ export type SortedItem = GeneralObject & {
     isChecked?: boolean;
     classes?: string;
   };
+};
+
+export type FixedColumnDictionary = {
+  htmlElement: HTMLElement;
+  newPosition: number;
+  elementWidth: number;
+  leftWidth: number;
 };

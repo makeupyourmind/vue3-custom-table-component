@@ -30,8 +30,12 @@
             <th
               v-for="(header, idx) in settings.headers"
               :key="idx"
-              class="v-table__header"
-              :style="{ width: header.width }"
+              :class="[
+                'v-table__header',
+                `v-table__header--${header.value}`,
+                { 'v-table__header--fixed-side': header.fixed },
+              ]"
+              :style="{ width: header.width, minWidth: header.width }"
             >
               <slot
                 :name="`header.${header.value}.content`"
@@ -92,7 +96,11 @@
                 @click="rowClick(item)"
                 v-for="(header, keyIdx) in settings.headers"
                 :key="keyIdx"
-                class="v-table__item"
+                :class="[
+                  'v-table__item',
+                  `v-table__item--${header.value}`,
+                  { 'v-table__item--fixed-side': header.fixed },
+                ]"
                 :data-label="header.text"
               >
                 <slot :name="`item.${header.value}`" :item="item">
@@ -136,10 +144,11 @@ import VLoader from '@/components/VLoader.vue';
 import VPagination from '@/components/VPagination.vue';
 import VIcon from '@/components/VIcon.vue';
 import VCheckbox from '@/components/VCheckbox.vue';
-import { VueColumnsResizable } from '@/plugins/directives';
 import { useRowSelection } from '@/hooks/use-row-selection.hook';
 import { useSortable } from '@/hooks/use-sortable.hook';
 import { Header, Item, SortedItem } from '@/types';
+import { VueColumnsResizable } from '@/plugins/directives';
+import { useSetupFixedColumnsHook } from '@/hooks/use-setup-fixed-columns.hook';
 
 export default defineComponent({
   name: 'VTable',
@@ -247,6 +256,11 @@ export default defineComponent({
         .forEach((item) => {
           doSort(item.value, item.defaultSort?.toUpperCase());
         });
+
+      const table = document.querySelector<HTMLElement>('.v-table');
+      if (!table) return;
+
+      useSetupFixedColumnsHook(table);
     });
 
     watch(sortedData, (currentSortedData) => {
@@ -322,7 +336,6 @@ export default defineComponent({
     font-weight: normal;
     font-size: 1.1rem;
     color: white;
-    position: relative;
   }
 
   th:last-child {
@@ -361,6 +374,8 @@ export default defineComponent({
   }
 
   &__header {
+    position: relative;
+
     &--sortable {
       cursor: pointer;
       display: flex;
@@ -372,6 +387,13 @@ export default defineComponent({
   &__item {
     &--selectable {
       width: 4.375rem;
+    }
+
+    &--fixed-side {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      background: white;
     }
   }
 }

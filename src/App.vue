@@ -50,13 +50,12 @@
         <!--        <button @click.stop="managementClick(slotsProps.item)">Click me</button>-->
       </template>
     </VTable>
+    <button @click="addNewRecord">Add a new record</button>
   </div>
 </template>
 
 <script lang="ts">
 import { ref, reactive, defineComponent, watch } from 'vue';
-
-import { ASC } from './constants';
 
 import { Item, SortableField } from '@/types';
 import VTable from '@/components/VTable.vue';
@@ -81,8 +80,9 @@ export default defineComponent({
         value: 'calories',
         sortable: true,
         resizable: true,
-        width: '360px',
-        defaultSort: ASC,
+        // width: '360px',
+        fixed: true,
+        // defaultSort: ASC,
         style: {
           className: 'calories-class',
           expectedValue: 220,
@@ -92,6 +92,8 @@ export default defineComponent({
       {
         text: 'Fat (g)',
         value: 'fat',
+        resizable: true,
+        fixed: true,
         style: {
           className: ['fat-class', 'one-more-class'],
           expectedValue: 6,
@@ -101,6 +103,7 @@ export default defineComponent({
       {
         text: 'Carbs (g)',
         value: 'carbs',
+        fixed: true,
       },
       {
         text: 'Management',
@@ -138,15 +141,41 @@ export default defineComponent({
       },
     ]);
 
-    setTimeout(() => {
+    const addNewRecord = () => {
       desserts.push({
-        name: 'Lollipop2',
-        calories: 392,
-        fat: 0.2,
-        carbs: 98,
-        management: 'f',
+        name: 'Lollipop3',
+        calories: 400,
+        fat: 0.8,
+        carbs: 42,
       });
-    }, 1000);
+    };
+
+    // setTimeout(() => {
+    //   desserts.push({
+    //     name: 'Lollipop3',
+    //     calories: 400,
+    //     fat: 0.8,
+    //     carbs: 42,
+    //   });
+    // }, 2000);
+    //
+    // setTimeout(() => {
+    //   desserts.push({
+    //     name: 'Lollipop2',
+    //     calories: 392,
+    //     fat: 0.5,
+    //     carbs: 38,
+    //   });
+    // }, 1000);
+
+    // Promise.resolve().then(() => {
+    //   desserts.push({
+    //     name: 'Lollipop2',
+    //     calories: 392,
+    //     fat: 0.2,
+    //     carbs: 98,
+    //   });
+    // });
 
     const handleApiSorting = (sortedFields: SortableField[]) => {
       console.log('handleApiSorting', sortedFields);
@@ -171,6 +200,7 @@ export default defineComponent({
       handleApiSorting,
       rowClick,
       managementClick,
+      addNewRecord,
     };
   },
 });
