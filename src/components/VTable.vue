@@ -11,7 +11,11 @@
       <table v-columns-resizable class="v-table">
         <thead>
           <tr>
-            <th v-if="showSelect" class="v-table__header--selectable">
+            <th
+              v-if="showSelect"
+              :style="{ width: selectWidth }"
+              class="v-table__header--selectable"
+            >
               <slot
                 v-if="!singleSelect && sortedData.length"
                 name="header-select-checkbox"
@@ -77,7 +81,11 @@
                 item.settings.classes,
               ]"
             >
-              <td v-if="showSelect" class="v-table__item v-table__item--selectable">
+              <td
+                v-if="showSelect"
+                :style="{ width: selectWidth }"
+                class="v-table__item v-table__item--selectable"
+              >
                 <slot
                   name="row-select-checkbox"
                   :id="idx"
@@ -202,6 +210,10 @@ export default defineComponent({
     singleSelect: {
       type: Boolean,
       default: false,
+    },
+    selectWidth: {
+      type: String,
+      default: null,
     },
   },
   emits: ['handle-api-sorting', 'update:modelValue', 'row-click'],
@@ -393,6 +405,8 @@ export default defineComponent({
   &__item {
     &--selectable {
       width: 4.375rem;
+      display: flex;
+      justify-content: center;
     }
 
     &--fixed-side {

@@ -94,7 +94,9 @@ export default defineComponent({
 
       // When on the last page
       if (props.currentPage === props.totalPages) {
-        return props.totalPages - (props.maxVisibleButtons - 1);
+        return props.totalPages - props.maxVisibleButtons < 0
+          ? 1
+          : props.totalPages - (props.maxVisibleButtons - 1);
       }
 
       // When in between

@@ -119,9 +119,9 @@ export function sliceIntoChunks<T>(arr: T[], chunkSize = 10) {
  * @param {Function} func - Function that should be delayed.
  * @param {number} timeout - Timeout.
  */
-export function debounce(func: (...args: any[]) => void, timeout = 500) {
+export function debounce(func: (...args: unknown[]) => void, timeout = 500) {
   let timer: number;
-  return (...args: any[]) => {
+  return (...args: unknown[]) => {
     clearTimeout(timer);
     timer = setTimeout(() => {
       func(...args);
@@ -146,7 +146,8 @@ export function fillGridTemplateSizeForHeaderItem(
 
   if (gridTemplateSizesAccumulator.length !== headerLength) {
     if (isHeaderHasCheckbox) {
-      gridTemplateSizesAccumulator.push('auto');
+      const size = useCustomWidth ? headerStyles.width : 'auto';
+      gridTemplateSizesAccumulator.push(size);
     } else if (useCustomWidth) {
       gridTemplateSizesAccumulator.push(`minmax(${headerStyles.width}, ${headerStyles.width})`);
     } else {
