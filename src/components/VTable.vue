@@ -263,11 +263,17 @@ export default defineComponent({
       useSetupFixedColumnsHook(table);
     });
 
-    watch(sortedData, (currentSortedData) => {
-      currentSortedData.forEach((sortedItem: SortedItem) => {
-        sortedItem.settings.classes = getRowClasses(sortedItem);
-      });
-    });
+    watch(
+      sortedData,
+      (currentSortedData) => {
+        currentSortedData.forEach((sortedItem: SortedItem) => {
+          sortedItem.settings.classes = getRowClasses(sortedItem);
+        });
+      },
+      {
+        immediate: true,
+      }
+    );
 
     const { selectAllCheckboxes, onCheckboxChange, markedAllCheckboxes, isSomeCheckboxUnMarked } =
       useRowSelection(props, context, { sortedData });
