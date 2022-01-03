@@ -109,6 +109,7 @@ const desserts = reactive([
 | `isPaginationModeEnabled`  | No | `{ totalPages: 1, perPage: 10 }` | Display slot with pagination. By default uses package basic pagination |
 | `show-select`  | No | `false` | Allow to select row |
 | `select-width`  | No | `null` | Manage width for selectable block |
+| `select-fixed`  | No | `false` | Make selectable field fixed to the left side |
 | `single-select`  | Yes | `false` | Hide/Show select all items checkbox |
 | `v-model="modelName"`  | No | `null` | To store the selected values |
 

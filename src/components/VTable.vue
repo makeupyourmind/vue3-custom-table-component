@@ -14,7 +14,11 @@
             <th
               v-if="showSelect"
               :style="{ width: selectWidth }"
-              class="v-table__header--selectable"
+              :class="[
+                'v-table__header',
+                'v-table__header--selectable',
+                { 'v-table__header--fixed-side': selectFixed },
+              ]"
             >
               <slot
                 v-if="!singleSelect && sortedData.length"
@@ -84,7 +88,11 @@
               <td
                 v-if="showSelect"
                 :style="{ width: selectWidth }"
-                class="v-table__item v-table__item--selectable"
+                :class="[
+                  'v-table__item',
+                  'v-table__item--selectable',
+                  { 'v-table__item--fixed-side': selectFixed },
+                ]"
               >
                 <slot
                   name="row-select-checkbox"
@@ -214,6 +222,10 @@ export default defineComponent({
     selectWidth: {
       type: String,
       default: null,
+    },
+    selectFixed: {
+      type: Boolean,
+      default: false,
     },
   },
   emits: ['handle-api-sorting', 'update:modelValue', 'row-click'],
