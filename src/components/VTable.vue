@@ -284,7 +284,13 @@ export default defineComponent({
       const table = document.querySelector<HTMLElement>('.v-table');
       if (!table) return;
 
-      useSetupFixedColumnsHook(table);
+      // check if we need to enable fixed columns hook
+      const applyFixedColumnsHook =
+        settings.headers.some((header) => header.fixed) || props.selectFixed;
+
+      if (applyFixedColumnsHook) {
+        useSetupFixedColumnsHook(table);
+      }
     });
 
     watch(
