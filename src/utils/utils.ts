@@ -1,3 +1,5 @@
+import { ref, Ref } from 'vue';
+
 import { ASC, MIN_SIZE_OF_COLUMN } from '@/constants';
 import { GeneralObject, SortableField } from '@/types';
 
@@ -130,6 +132,7 @@ export function debounce(func: (...args: unknown[]) => void, timeout = 500) {
 }
 
 /**
+ * Fill accumulator the sizes of header items.
  *
  * @param headerItem
  * @param gridTemplateSizesAccumulator
@@ -158,4 +161,36 @@ export function fillGridTemplateSizeForHeaderItem(
   return {
     useCustomWidth,
   };
+}
+
+/**
+ * Calculate style width unit.
+ *
+ * @param {string} width - Element width.
+ * @return {Array} - Actual element width and width unit (like 'px', 'rem' or etc.).
+ */
+export function extractStyleWidthValueWithUnit(width: string) {
+  const unit = width.match(/[0-9]*\.?[0-9]+(px|rem)?/i)?.[1] || 'px';
+  const size = width.split(unit)[0];
+  return [size, unit];
+}
+
+/**
+ * Convert size of selectable column to correct size with correct unit.
+ *
+ * @param {Ref<string>} sizeOfSelectableColumn - Default selectable column width.
+ * @param {Array} propsSelectWidthValueWithUnit - Props select width with correct unit.
+ */
+export function calculateSizeOfSelectableColumnWithCorrectUnit(
+  sizeOfSelectableColumn: Ref<string>,
+  propsSelectWidthValueWithUnit: string[]
+) {
+  if (sizeOfSelectableColumn.value.includes(propsSelectWidthValueWithUnit[1])) {
+    return sizeOfSelectableColumn;
+  }
+  if (propsSelectWidthValueWithUnit[1] === 'rem') {
+    const value = parseInt(sizeOfSelectableColumn.value) / 16;
+    return ref(`${value}rem`);
+  }
+  return sizeOfSelectableColumn;
 }

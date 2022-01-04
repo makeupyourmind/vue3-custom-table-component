@@ -12,7 +12,7 @@
         perPage: 10,
       }"
       :show-select="true"
-      :select-width="'150px'"
+      :select-width="'9.375rem'"
       :single-select="false"
       :select-fixed="true"
       @handle-api-sorting="handleApiSorting"

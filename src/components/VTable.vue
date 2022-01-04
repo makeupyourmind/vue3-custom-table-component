@@ -13,7 +13,7 @@
           <tr>
             <th
               v-if="showSelect"
-              :style="{ width: selectWidth }"
+              :style="{ width: sizeOfSelectableColumn }"
               :class="[
                 'v-table__header',
                 'v-table__header--selectable',
@@ -87,7 +87,7 @@
             >
               <td
                 v-if="showSelect"
-                :style="{ width: selectWidth }"
+                :style="{ width: sizeOfSelectableColumn }"
                 :class="[
                   'v-table__item',
                   'v-table__item--selectable',
@@ -165,6 +165,10 @@ import { useSortable } from '@/hooks/use-sortable.hook';
 import { Header, Item, SortedItem } from '@/types';
 import { VueColumnsResizable } from '@/plugins/directives';
 import { useSetupFixedColumnsHook } from '@/hooks/use-setup-fixed-columns.hook';
+import {
+  calculateSizeOfSelectableColumnWithCorrectUnit,
+  extractStyleWidthValueWithUnit,
+} from '@/utils/utils';
 
 export default defineComponent({
   name: 'VTable',
@@ -230,6 +234,25 @@ export default defineComponent({
   },
   emits: ['handle-api-sorting', 'update:modelValue', 'row-click'],
   setup(props, context) {
+    let sizeOfSelectableColumn = ref('70px');
+    const propsSelectWidthValueWithUnit = extractStyleWidthValueWithUnit(
+      props.selectWidth || sizeOfSelectableColumn.value
+    );
+
+    let sizeOfSelectableColumnWithCorrectUnit = calculateSizeOfSelectableColumnWithCorrectUnit(
+      sizeOfSelectableColumn,
+      propsSelectWidthValueWithUnit
+    );
+
+    if (
+      parseFloat(propsSelectWidthValueWithUnit[0]) <=
+      parseFloat(sizeOfSelectableColumnWithCorrectUnit.value)
+    ) {
+      sizeOfSelectableColumn = sizeOfSelectableColumnWithCorrectUnit;
+    } else {
+      sizeOfSelectableColumn = ref(propsSelectWidthValueWithUnit.join(''));
+    }
+
     const settings = reactive({
       headers: [...props.headers].filter((header) => header.value && header.text),
     });
@@ -324,6 +347,7 @@ export default defineComponent({
       rowClick,
       settings,
       selectAllCheckboxChanged,
+      sizeOfSelectableColumn,
     };
   },
 });
