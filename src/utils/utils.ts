@@ -18,49 +18,36 @@ export function transformToFieldsWithSortingSign(sortableFields: SortableField[]
 }
 
 /**
- * Transform field order to SQL format. Like asc|desc.
- *
- * @param {SortableField[]} sortableFields - Sortable fields.
- * @return {SortableField[]} - Sortable fields with order field in sql format.
- */
-export function transformSortableFieldsOrderToSqlFormat(sortableFields: SortableField[]) {
-  return sortableFields.map((sortableField) => {
-    return {
-      ...sortableField,
-      order: sortableField.order === ASC ? 'asc' : 'desc',
-    };
-  });
-}
-
-/**
  * Sort array of objects by property key.
  *
  * @param {string} property - Property name.
  */
-export function dynamicSort<T, Key extends Extract<keyof T, string>>(property: Key) {
+export function dynamicSort<T, R extends Extract<keyof T, string>, Key extends R | `-${R}`>(
+  property: Key
+) {
   let sortOrder = 1;
+  let prop = property as R;
   if (property[0] === '-') {
     sortOrder = -1;
-    // eslint-disable-next-line no-param-reassign
-    property = property.substr(1) as Key;
+    prop = property.substr(1) as R;
   }
   return function (a: T, b: T) {
     /* next line works with strings and numbers,
      * and you may want to customize it to your needs
      */
-    const result = a[property] < b[property] ? -1 : a[property] > b[property] ? 1 : 0;
+    const result = a[prop] < b[prop] ? -1 : a[prop] > b[prop] ? 1 : 0;
     return result * sortOrder;
   };
 }
 
-export function dynamicSortMultiple<T>(...arg: string[]) {
+export function dynamicSortMultiple(...arg: string[]) {
   /*
    * save the arguments object as it will be overwritten
    * note that arguments object is an array-like object
    * consisting of the names of the properties to sort by
    */
   const props = arg;
-  return function (obj1: T, obj2: T) {
+  return function (obj1: GeneralObject, obj2: GeneralObject) {
     const numberOfProperties = props.length;
     let i = 0,
       result = 0;

@@ -1,11 +1,7 @@
 import { computed, Ref, reactive, ComputedRef } from 'vue';
 
 import { ASC, DESC } from '@/constants';
-import {
-  dynamicSortMultiple,
-  transformSortableFieldsOrderToSqlFormat,
-  transformToFieldsWithSortingSign,
-} from '@/utils/utils';
+import { dynamicSortMultiple, transformToFieldsWithSortingSign } from '@/utils/utils';
 import { Header, TableItem, SortableField, SortedItem } from '@/types';
 
 export const useSortable = (
@@ -67,7 +63,7 @@ export const useSortable = (
     }
 
     if (props.useApiSorting) {
-      context.emit('handle-api-sorting', transformSortableFieldsOrderToSqlFormat(sortableFields));
+      context.emit('handle-api-sorting', sortableFields);
     }
   };
 
