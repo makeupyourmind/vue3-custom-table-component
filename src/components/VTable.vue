@@ -162,7 +162,7 @@ import VIcon from '@/components/VIcon.vue';
 import VCheckbox from '@/components/VCheckbox.vue';
 import { useRowSelection } from '@/hooks/use-row-selection.hook';
 import { useSortable } from '@/hooks/use-sortable.hook';
-import { Header, Item, SortedItem } from '@/types';
+import { Header, TableItem, SortedItem } from '@/types';
 import { VueColumnsResizable } from '@/plugins/directives';
 import { useSetupFixedColumnsHook } from '@/hooks/use-setup-fixed-columns.hook';
 import {
@@ -182,7 +182,7 @@ export default defineComponent({
       required: true,
     },
     items: {
-      type: Array as PropType<Item[]>,
+      type: Array as PropType<TableItem[]>,
       default: () => [],
     },
     isLoading: {
@@ -215,7 +215,7 @@ export default defineComponent({
     },
     // Model for selected elements
     modelValue: {
-      type: Array as PropType<Item[]>,
+      type: Array as PropType<TableItem[]>,
       default: () => [],
     },
     // Hide select all elements checkbox

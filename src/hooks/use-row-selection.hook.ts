@@ -1,6 +1,6 @@
 import { computed, ComputedRef } from 'vue';
 
-import { Item, SortedItem } from '@/types';
+import { TableItem, SortedItem } from '@/types';
 import { findObjectIndex } from '@/utils/utils';
 
 export const useRowSelection = (
@@ -26,7 +26,7 @@ export const useRowSelection = (
     });
   };
 
-  const onCheckboxChange = (newItem: Item) => {
+  const onCheckboxChange = (newItem: TableItem) => {
     const modelValue = [...props.modelValue];
     const indexOfItem = findObjectIndex(modelValue, newItem);
 
@@ -44,7 +44,7 @@ export const useRowSelection = (
     updateSelectedItems(selectedItems);
   };
 
-  const updateSelectedItems = (value: Item[]) => {
+  const updateSelectedItems = (value: TableItem[]) => {
     context.emit('update:modelValue', value);
   };
 

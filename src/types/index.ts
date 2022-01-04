@@ -32,7 +32,7 @@ export type GeneralObject = {
   [key: string]: string | number | boolean | GeneralObject;
 };
 
-export type Item = GeneralObject;
+export type TableItem = GeneralObject;
 
 export type SortedItem = GeneralObject & {
   settings: {

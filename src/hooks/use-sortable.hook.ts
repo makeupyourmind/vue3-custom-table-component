@@ -6,7 +6,7 @@ import {
   transformSortableFieldsOrderToSqlFormat,
   transformToFieldsWithSortingSign,
 } from '@/utils/utils';
-import { Header, Item, SortableField, SortedItem } from '@/types';
+import { Header, TableItem, SortableField, SortedItem } from '@/types';
 
 export const useSortable = (
   props: any,
@@ -71,7 +71,7 @@ export const useSortable = (
     }
   };
 
-  const sliceArrayForPagination = (array: Item[]) => {
+  const sliceArrayForPagination = (array: TableItem[]) => {
     return [...array].slice(
       Math.max(0, (currentPage.value - 1) * props.paginationOptions.perPage),
       props.paginationOptions.perPage * currentPage.value

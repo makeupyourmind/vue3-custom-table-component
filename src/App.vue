@@ -59,7 +59,7 @@
 <script lang="ts">
 import { ref, reactive, defineComponent, watch } from 'vue';
 
-import { Item, SortableField } from '@/types';
+import { TableItem, SortableField } from '@/types';
 import VTable from '@/components/VTable.vue';
 // import VCheckbox from '@/components/VCheckbox.vue';
 
@@ -183,11 +183,11 @@ export default defineComponent({
       console.log('handleApiSorting', sortedFields);
     };
 
-    const rowClick = (clickedItem: Item) => {
+    const rowClick = (clickedItem: TableItem) => {
       console.log('clicked item', clickedItem);
     };
 
-    const managementClick = (item: Item) => {
+    const managementClick = (item: TableItem) => {
       console.log('managementClick', item);
     };
 
