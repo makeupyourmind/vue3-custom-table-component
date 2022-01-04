@@ -27,8 +27,8 @@ export const useRowSelection = (
   };
 
   const onCheckboxChange = (newItem: Item) => {
-    const indexOfItem = findObjectIndex(props.modelValue, newItem);
     const modelValue = [...props.modelValue];
+    const indexOfItem = findObjectIndex(modelValue, newItem);
 
     const toggledItemIndex = findObjectIndex(sortedData.value, newItem);
     sortedData.value[toggledItemIndex].settings.isChecked =

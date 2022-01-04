@@ -7,10 +7,10 @@ import { GeneralObject, SortableField } from '@/types';
  * Get sortable fields in array format like ['field', '-field'].
  * If `-field` - desc, otherwise - asc.
  *
- * @param {Array} sortableFields - Array of sortable fields.
- * @return {*}
+ * @param {SortableField[]} sortableFields - Array of sortable fields.
+ * @return {Array<string>} - Sortable fields with sorting sign.
  */
-export function transformToFieldsWithSortingSign(sortableFields: SortableField[]) {
+export function transformToFieldsWithSortingSign(sortableFields: SortableField[]): Array<string> {
   return sortableFields.map((sortableField) => {
     const { field, order } = sortableField;
     return order === ASC ? field : `-${field}`;
@@ -20,8 +20,8 @@ export function transformToFieldsWithSortingSign(sortableFields: SortableField[]
 /**
  * Transform field order to SQL format. Like asc|desc.
  *
- * @param {Array} sortableFields - Sortable fields.
- * @return {Array} - Sortable fields with order field in sql format.
+ * @param {SortableField[]} sortableFields - Sortable fields.
+ * @return {SortableField[]} - Sortable fields with order field in sql format.
  */
 export function transformSortableFieldsOrderToSqlFormat(sortableFields: SortableField[]) {
   return sortableFields.map((sortableField) => {
@@ -32,6 +32,11 @@ export function transformSortableFieldsOrderToSqlFormat(sortableFields: Sortable
   });
 }
 
+/**
+ * Sort array of objects by property key.
+ *
+ * @param {string} property - Property name.
+ */
 export function dynamicSort<T, Key extends Extract<keyof T, string>>(property: Key) {
   let sortOrder = 1;
   if (property[0] === '-') {
@@ -80,12 +85,46 @@ export function dynamicSortMultiple<T>(...arg: string[]) {
 export function findObjectIndex(list: GeneralObject[], obj: GeneralObject) {
   let i;
   for (i = 0; i < list.length; i++) {
-    if (list[i] === obj) {
+    if (deepObjectEqual(list[i], obj)) {
       return i;
     }
   }
 
   return -1;
+}
+
+/**
+ * Deep object comparison.
+ *
+ * @param {GeneralObject} object1 - Object tp compare.
+ * @param {GeneralObject} object2 - Object tp compare.
+ * @return {boolean} - Equals objects or not.
+ */
+export function deepObjectEqual(object1: GeneralObject, object2: GeneralObject) {
+  const keys1 = Object.keys(object1);
+  const keys2 = Object.keys(object2);
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+  for (const key of keys1) {
+    const val1 = object1[key];
+    const val2 = object2[key];
+    const areObjects = isObject(val1) && isObject(val2);
+    if ((areObjects && !deepObjectEqual(val1, val2)) || (!areObjects && val1 !== val2)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Check if passed parameter is an object.
+ *
+ * @param {unknown} object - Parameter that should be checked.
+ * @return {boolean} - True or false.
+ */
+export function isObject(object: unknown): object is object {
+  return object != null && typeof object === 'object';
 }
 
 /**
