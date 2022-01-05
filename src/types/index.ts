@@ -47,3 +47,9 @@ export type FixedColumnDictionary = {
   elementWidth: number;
   leftWidth: number;
 };
+
+export type PaginationOptions = {
+  maxVisibleButtons?: number;
+  totalPages: number;
+  perPage: number;
+};

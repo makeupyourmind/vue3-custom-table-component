@@ -1,11 +1,12 @@
-import { computed, ComputedRef } from 'vue';
+import { computed, ComputedRef, EmitsOptions } from 'vue';
+import { SetupContext } from '@vue/runtime-core';
 
 import { TableItem, SortedItem } from '@/types';
 import { findObjectIndex } from '@/utils/utils';
 
-export const useRowSelection = (
+export const useRowSelection = <E extends EmitsOptions>(
   props: any,
-  context: any,
+  context: SetupContext<E>,
   { sortedData }: { sortedData: ComputedRef<SortedItem[]> }
 ) => {
   const markedAllCheckboxes = computed(() => {

@@ -162,7 +162,7 @@ import VIcon from '@/components/VIcon.vue';
 import VCheckbox from '@/components/VCheckbox.vue';
 import { useRowSelection } from '@/hooks/use-row-selection.hook';
 import { useSortable } from '@/hooks/use-sortable.hook';
-import { Header, TableItem, SortedItem } from '@/types';
+import { Header, TableItem, SortedItem, PaginationOptions } from '@/types';
 import { VueColumnsResizable } from '@/plugins/directives';
 import { useSetupFixedColumnsHook } from '@/hooks/use-setup-fixed-columns.hook';
 import {
@@ -198,7 +198,7 @@ export default defineComponent({
       default: false,
     },
     paginationOptions: {
-      type: Object,
+      type: Object as PropType<PaginationOptions>,
       default: () => ({
         totalPages: 1,
         perPage: 10,

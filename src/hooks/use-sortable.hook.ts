@@ -1,12 +1,13 @@
-import { computed, Ref, reactive, ComputedRef } from 'vue';
+import { computed, Ref, reactive, ComputedRef, EmitsOptions } from 'vue';
+import { SetupContext } from '@vue/runtime-core';
 
 import { ASC, DESC } from '@/constants';
 import { dynamicSortMultiple, transformToFieldsWithSortingSign } from '@/utils/utils';
 import { Header, TableItem, SortableField, SortedItem } from '@/types';
 
-export const useSortable = (
+export const useSortable = <E extends EmitsOptions>(
   props: any,
-  context: any,
+  context: SetupContext<E>,
   { currentPage, settings }: { currentPage: Ref<number>; settings: { headers: Header[] } }
 ) => {
   const sortableFields: SortableField[] = reactive([]);
