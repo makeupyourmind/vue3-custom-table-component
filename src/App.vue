@@ -152,33 +152,6 @@ export default defineComponent({
       });
     };
 
-    // setTimeout(() => {
-    //   desserts.push({
-    //     name: 'Lollipop3',
-    //     calories: 400,
-    //     fat: 0.8,
-    //     carbs: 42,
-    //   });
-    // }, 2000);
-    //
-    // setTimeout(() => {
-    //   desserts.push({
-    //     name: 'Lollipop2',
-    //     calories: 392,
-    //     fat: 0.5,
-    //     carbs: 38,
-    //   });
-    // }, 1000);
-
-    // Promise.resolve().then(() => {
-    //   desserts.push({
-    //     name: 'Lollipop2',
-    //     calories: 392,
-    //     fat: 0.2,
-    //     carbs: 98,
-    //   });
-    // });
-
     const handleApiSorting = (sortedFields: SortableField[]) => {
       console.log('handleApiSorting', sortedFields);
     };

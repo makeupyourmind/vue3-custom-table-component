@@ -1,11 +1,11 @@
 import { computed, ComputedRef, EmitsOptions } from 'vue';
 import { SetupContext } from '@vue/runtime-core';
 
-import { TableItem, SortedItem } from '@/types';
+import { TableItem, SortedItem, VTableComponentProps } from '@/types';
 import { findObjectIndex } from '@/utils/utils';
 
 export const useRowSelection = <E extends EmitsOptions>(
-  props: any,
+  props: VTableComponentProps,
   context: SetupContext<E>,
   { sortedData }: { sortedData: ComputedRef<SortedItem[]> }
 ) => {

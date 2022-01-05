@@ -235,6 +235,11 @@ export default defineComponent({
   emits: ['handle-api-sorting', 'update:modelValue', 'row-click'],
   setup(props, context) {
     let sizeOfSelectableColumn = ref('70px');
+    const settings = reactive({
+      headers: [...props.headers].filter((header) => header.value && header.text),
+    });
+    const currentPage = ref(1);
+
     const propsSelectWidthValueWithUnit = extractStyleWidthValueWithUnit(
       props.selectWidth || sizeOfSelectableColumn.value
     );
@@ -252,12 +257,6 @@ export default defineComponent({
     } else {
       sizeOfSelectableColumn = ref(propsSelectWidthValueWithUnit.join(''));
     }
-
-    const settings = reactive({
-      headers: [...props.headers].filter((header) => header.value && header.text),
-    });
-
-    const currentPage = ref(1);
 
     const onPageChange = (page: number) => {
       currentPage.value = page;

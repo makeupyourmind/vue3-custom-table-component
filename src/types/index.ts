@@ -53,3 +53,18 @@ export type PaginationOptions = {
   totalPages: number;
   perPage: number;
 };
+
+export type VTableComponentProps = {
+  headers: Header[];
+  items: TableItem[];
+  isLoading: boolean;
+  loaderMessage: string;
+  useApiSorting: boolean;
+  paginationOptions: PaginationOptions;
+  isPaginationModeEnabled: boolean;
+  showSelect: boolean;
+  modelValue: TableItem[];
+  singleSelect: boolean;
+  selectWidth: string;
+  selectFixed: boolean;
+};

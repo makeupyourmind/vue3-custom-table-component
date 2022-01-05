@@ -3,10 +3,10 @@ import { SetupContext } from '@vue/runtime-core';
 
 import { ASC, DESC } from '@/constants';
 import { dynamicSortMultiple, transformToFieldsWithSortingSign } from '@/utils/utils';
-import { Header, TableItem, SortableField, SortedItem } from '@/types';
+import { Header, TableItem, SortableField, SortedItem, VTableComponentProps } from '@/types';
 
 export const useSortable = <E extends EmitsOptions>(
-  props: any,
+  props: VTableComponentProps,
   context: SetupContext<E>,
   { currentPage, settings }: { currentPage: Ref<number>; settings: { headers: Header[] } }
 ) => {
