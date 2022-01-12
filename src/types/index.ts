@@ -34,8 +34,8 @@ export type GeneralObject = {
 
 export type TableItem = GeneralObject;
 
-export type SortedItem = GeneralObject & {
-  settings: {
+export type SortedItem = TableItem & {
+  itemSettings: {
     isChecked?: boolean;
     classes?: string;
   };
@@ -63,8 +63,13 @@ export type VTableComponentProps = {
   paginationOptions: PaginationOptions;
   isPaginationModeEnabled: boolean;
   showSelect: boolean;
-  modelValue: TableItem[];
+  modelValue: SortedItem[];
   singleSelect: boolean;
-  selectWidth: string;
-  selectFixed: boolean;
+  selectCheckboxWidth: string;
+  selectCheckboxFixed: boolean;
+};
+
+export type Settings = {
+  headers: Header[];
+  items: TableItem[] | SortedItem[];
 };

@@ -12,9 +12,7 @@
         perPage: 10,
       }"
       :show-select="true"
-      :select-width="'9.375rem'"
       :single-select="false"
-      :select-fixed="true"
       @handle-api-sorting="handleApiSorting"
       @row-click="rowClick"
     >
@@ -76,6 +74,11 @@ export default defineComponent({
         sortable: true,
         resizable: true,
         width: '350px',
+        style: {
+          className: 'dessert class',
+          expectedValue: 'Ice cream sandwich',
+          condition: '=',
+        },
       },
       {
         text: 'Calories',
@@ -105,7 +108,7 @@ export default defineComponent({
       {
         text: 'Carbs (g)',
         value: 'carbs',
-        fixed: true,
+        // fixed: true,
       },
       {
         text: 'Management',

@@ -76,9 +76,9 @@ export const useSetupFixedColumnsHook = (table: HTMLElement) => {
    */
   const insertElementsFromDictionary = <D extends FixedColumnDictionary>(dictionary: D[]) => {
     dictionary.forEach((entityWithFixedSide) => {
-      if (entityWithFixedSide.htmlElement.parentNode?.childNodes[entityWithFixedSide.newPosition]) {
+      if (entityWithFixedSide.htmlElement.parentNode?.children[entityWithFixedSide.newPosition]) {
         insertAfter(
-          entityWithFixedSide.htmlElement.parentNode.childNodes[entityWithFixedSide.newPosition],
+          entityWithFixedSide.htmlElement.parentNode.children[entityWithFixedSide.newPosition],
           entityWithFixedSide.htmlElement
         );
       }

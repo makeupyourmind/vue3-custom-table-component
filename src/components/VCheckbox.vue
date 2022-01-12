@@ -74,11 +74,11 @@ export default defineComponent({
   background-color: transparent;
   display: block;
   position: absolute;
-  left: 0.65rem;
+  left: 0.45rem;
   top: 0.25rem;
-  width: 0.5rem;
-  height: 1rem;
-  border-right: 3px solid $checkbox-checked;
+  width: 0.25rem;
+  height: 0.5rem;
+  border-right: 2px solid $checkbox-checked;
   transition: border-color 0.3s ease;
 }
 
@@ -88,8 +88,9 @@ export default defineComponent({
     @include vh();
     + label {
       position: relative;
-      padding: 0.5rem 0 0 2rem;
-      margin-bottom: 1rem;
+      display: block;
+      width: 1.25rem;
+      height: 1.25rem;
       user-select: none;
       color: $checkbox-background;
 
@@ -98,9 +99,9 @@ export default defineComponent({
         position: absolute;
         top: 0;
         left: 0;
-        width: 1.75rem;
-        height: 1.75rem;
-        border: 2px solid $checkbox-border;
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid $checkbox-border-color;
         border-radius: 0.25rem;
         background: $checkbox-background;
         text-align: center;
@@ -119,9 +120,13 @@ export default defineComponent({
   input[type='checkbox'] {
     + label {
       &.some-checkbox-is-un-marked {
+        &:before {
+          content: '';
+          background: $black-color;
+        }
+
         &:after {
           @include after-pseudo;
-          border-bottom: none;
           transform: rotate(90deg);
         }
       }
@@ -131,12 +136,20 @@ export default defineComponent({
       + label {
         &:before {
           content: '';
+          background: $black-color;
         }
 
         &:after {
-          @include after-pseudo;
+          //@include after-pseudo;
           border-bottom: 3px solid $checkbox-checked;
-          transform: rotate(45deg);
+          content: '';
+          width: 20px;
+          height: 30px;
+          left: 7px;
+          top: 7px;
+          transform: rotate(0deg);
+          background-repeat: no-repeat;
+          background-image: url('~@/assets/checkbox-stroke.svg');
         }
       }
     }

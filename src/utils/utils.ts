@@ -169,7 +169,9 @@ export function fillGridTemplateSizeForHeaderItem(
   gridTemplateSizesAccumulator: string[],
   headerLength: number
 ) {
-  const isHeaderHasCheckbox = [...headerItem.classList].includes('v-table__header--selectable');
+  const isHeaderHasCheckbox = [...headerItem.classList].includes(
+    'v-table__header__item--selectable'
+  );
   const headerStyles = headerItem.style;
   const useCustomWidth = headerStyles[0] === 'width';
 
