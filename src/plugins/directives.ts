@@ -9,7 +9,7 @@ export const VueColumnsResizable = (el: HTMLElement) => {
   if (['TABLE', 'THEAD'].indexOf(nodeName) < 0) return;
 
   const thead: HTMLElement | null = el.querySelector('thead');
-  const tableContainer = document.querySelector<HTMLElement>('.v-table__container');
+  const tableContainer = document.querySelector<HTMLElement>('.v-container');
   if (!thead) return;
   const ths = thead.querySelectorAll('th'); // header items
   const headerHasSelectableField = thead.querySelector('.v-table__header__item--selectable');

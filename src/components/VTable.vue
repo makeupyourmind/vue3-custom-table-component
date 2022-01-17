@@ -1,5 +1,5 @@
 <template>
-  <div class="table-component">
+  <div class="v-component">
     <!--    loader slot -->
     <div v-if="isLoading">
       <slot name="loader">
@@ -8,7 +8,7 @@
     </div>
     <!--    table content -->
     <div v-else>
-      <div class="v-table__container">
+      <div class="v-container">
         <table v-columns-resizable class="v-table">
           <thead class="v-table__header">
             <tr>
@@ -358,7 +358,7 @@ export default defineComponent({
 @import '../assets/styles/_fonts.scss';
 @import '../assets/styles/_variables.scss';
 
-.table-component {
+.v-component {
   box-shadow: 0px 4px 12px 1px rgb(2 61 151 / 18%);
   border-radius: 8px;
   border-bottom: 1px solid transparent;
@@ -374,14 +374,6 @@ export default defineComponent({
   z-index: 1;
 
   $v-table: &;
-
-  &__container {
-    position: relative;
-    overflow-x: scroll;
-    min-width: 100%;
-    background: $white-color;
-    padding: 1.25rem 0 1.25rem 0.5rem;
-  }
 
   &__row {
     display: grid;
@@ -574,7 +566,13 @@ export default defineComponent({
   }
 }
 
-.v-table__container {
+.v-container {
+  position: relative;
+  overflow-x: scroll;
+  min-width: 100%;
+  background: $white-color;
+  padding: 1.25rem 0 1.25rem 0.5rem;
+
   &::-webkit-scrollbar {
     height: 28px; /* height of horizontal scrollbar ← You're missing this */
   }
