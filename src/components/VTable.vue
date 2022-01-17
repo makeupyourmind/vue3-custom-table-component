@@ -572,6 +572,7 @@ export default defineComponent({
   min-width: 100%;
   background: $white-color;
   padding: 1.25rem 0 1.25rem 0.5rem;
+  margin-bottom: 1rem;
 
   &::-webkit-scrollbar {
     height: 28px; /* height of horizontal scrollbar ← You're missing this */
