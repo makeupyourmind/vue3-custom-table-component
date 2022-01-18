@@ -1,9 +1,34 @@
-$loader-main-color: #fff;
+// common
+$black-color: #000000;
+$white-color: #fff;
+
+// loader
+$loader-main-color: $white-color;
 $loader-color: #1867c0;
 $loader-back-color: #86b1e1;
 $loader-time: 3s;
 $loader-size: 4px;
 
-$checkbox-background: #fff;
-$checkbox-border: #e900ff;
-$checkbox-checked: $checkbox-border;
+// checkbox
+$checkbox-background: $white-color;
+$checkbox-border-color: #181D3D;
+$checkbox-checked: $white-color;
+
+// table header colors
+$table-header-bg-color: #F7FAFB;;
+$table-header-text-color: #6a6d6d;
+$table-header-being-resized: #DEE8F7;
+$table-header-being-resized-border-color: #071FB8;
+$table-header-being-resized-for-row: #EBEEFE;
+
+$table-border-color: #eef1f2;
+// table body content
+$table-row-item-text-color: $checkbox-border-color;
+
+$table-row-item-hover-bg-color: $table-header-being-resized-for-row;
+
+// sort icon
+$sort-icon-bg-color: #636992;
+
+// scroll
+$scrollbar-thumb-color: #c4c7d4;

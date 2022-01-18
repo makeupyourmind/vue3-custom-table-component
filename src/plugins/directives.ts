@@ -1,5 +1,5 @@
 import { Column } from '@/types';
-import { MIN_SIZE_OF_COLUMN } from '@/constants';
+import { MIN_SIZE_OF_COLUMN, MIN_WIDTH_OF_SELECTABLE_FIELD } from '@/constants';
 import { fillGridTemplateSizeForHeaderItem } from '@/utils/utils';
 import { useTableMutationObserverHook } from '@/hooks/use-table-mutation-observer.hook';
 
@@ -9,8 +9,10 @@ export const VueColumnsResizable = (el: HTMLElement) => {
   if (['TABLE', 'THEAD'].indexOf(nodeName) < 0) return;
 
   const thead: HTMLElement | null = el.querySelector('thead');
+  const tableContainer = document.querySelector<HTMLElement>('.v-container');
   if (!thead) return;
   const ths = thead.querySelectorAll('th'); // header items
+  const headerHasSelectableField = thead.querySelector('.v-table__header__item--selectable');
 
   // The max (fr) values for grid-template-columns
   const columnTypeToRatioMap: { [key: string]: number } = {
@@ -43,8 +45,11 @@ export const VueColumnsResizable = (el: HTMLElement) => {
   const onMouseMove = (e: MouseEvent) =>
     requestAnimationFrame(() => {
       const horizontalScrollOffset = document.documentElement.scrollLeft;
-      const width = horizontalScrollOffset + e.clientX - (headerBeingResized?.offsetLeft || 0);
-
+      const headerBeingResizedOffsetLeft =
+        headerHasSelectableField && tableContainer?.scrollLeft === 0
+          ? MIN_WIDTH_OF_SELECTABLE_FIELD
+          : 0;
+      const width = horizontalScrollOffset + e.clientX - headerBeingResizedOffsetLeft;
       // Update the column object with the new size value
       const column = columns.find(({ header }) => header === headerBeingResized);
       if (!column) return;
@@ -80,6 +85,10 @@ export const VueColumnsResizable = (el: HTMLElement) => {
     // console.log('onMouseUp');
     window.removeEventListener('mousemove', onMouseMove);
     window.removeEventListener('mouseup', onMouseUp);
+    const headerCellIndex = (headerBeingResized as HTMLTableCellElement).cellIndex;
+    document.querySelectorAll('.v-table__body tr').forEach((tableRow) => {
+      tableRow.children[headerCellIndex].classList.remove('header--being-resized');
+    });
     headerBeingResized && headerBeingResized.classList.remove('header--being-resized');
     headerBeingResized = null;
   };
@@ -90,6 +99,11 @@ export const VueColumnsResizable = (el: HTMLElement) => {
     headerBeingResized = (e.target as HTMLElement).parentNode as HTMLElement;
     window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('mouseup', onMouseUp);
+    const headerCellIndex = (headerBeingResized as HTMLTableCellElement).cellIndex;
+    // every row cell that has being resized has related class
+    document.querySelectorAll('.v-table__body tr').forEach((tableRow) => {
+      tableRow.children[headerCellIndex].classList.add('header--being-resized');
+    });
     headerBeingResized && headerBeingResized.classList.add('header--being-resized');
   };
 

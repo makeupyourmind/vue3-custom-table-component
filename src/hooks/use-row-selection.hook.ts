@@ -1,7 +1,7 @@
 import { computed, ComputedRef, EmitsOptions } from 'vue';
 import { SetupContext } from '@vue/runtime-core';
 
-import { TableItem, SortedItem, VTableComponentProps } from '@/types';
+import { SortedItem, VTableComponentProps } from '@/types';
 import { findObjectIndex } from '@/utils/utils';
 
 export const useRowSelection = <E extends EmitsOptions>(
@@ -23,17 +23,17 @@ export const useRowSelection = <E extends EmitsOptions>(
     updateSelectedItems(value);
 
     sortedData.value.forEach((sortedItem: SortedItem) => {
-      sortedItem.settings.isChecked = !flag;
+      sortedItem.itemSettings.isChecked = !flag;
     });
   };
 
-  const onCheckboxChange = (newItem: TableItem) => {
+  const onCheckboxChange = (newItem: SortedItem) => {
     const modelValue = [...props.modelValue];
     const indexOfItem = findObjectIndex(modelValue, newItem);
 
     const toggledItemIndex = findObjectIndex(sortedData.value, newItem);
-    sortedData.value[toggledItemIndex].settings.isChecked =
-      !sortedData.value[toggledItemIndex].settings.isChecked;
+    sortedData.value[toggledItemIndex].itemSettings.isChecked =
+      !sortedData.value[toggledItemIndex].itemSettings.isChecked;
 
     if (indexOfItem !== -1) {
       modelValue.splice(indexOfItem, 1);
@@ -41,12 +41,12 @@ export const useRowSelection = <E extends EmitsOptions>(
       return;
     }
     // If single select is enabled allow to select only one item
-    const selectedItems = props.singleSelect ? [newItem] : modelValue.concat(newItem);
-    updateSelectedItems(selectedItems);
+    const value = props.singleSelect ? [newItem] : modelValue.concat(newItem);
+    updateSelectedItems(value);
   };
 
-  const updateSelectedItems = (value: TableItem[]) => {
-    context.emit('update:modelValue', value);
+  const updateSelectedItems = (selectedItems: SortedItem[]) => {
+    context.emit('update:modelValue', selectedItems);
   };
 
   return {

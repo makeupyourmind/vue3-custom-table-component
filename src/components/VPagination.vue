@@ -1,32 +1,50 @@
 <template>
   <ul class="v-pagination">
     <li
-      class="v-pagination__btn"
-      :class="{
-        'v-pagination__btn--disabled': isInFirstPage,
-      }"
+      :class="[
+        'v-pagination__btn',
+        'v-pagination__btn--start',
+        {
+          'v-pagination__btn--disabled': isInFirstPage,
+        },
+      ]"
       v-on="!isInFirstPage ? { click: onClickFirstPage } : {}"
     >
-      <VIcon class="v-pagination__btn--icon" icon="angle-double-left" />
+      To the beginning
     </li>
 
     <li
-      class="v-pagination__btn"
-      :class="{
-        'v-pagination__btn--disabled': isInFirstPage,
-      }"
+      :class="[
+        'v-pagination__btn',
+        'v-pagination__btn--arrow',
+        {
+          'v-pagination__btn--disabled': isInFirstPage,
+        },
+      ]"
       v-on="!isInFirstPage ? { click: onClickPreviousPage } : {}"
     >
-      <VIcon class="v-pagination__btn--icon" icon="chevron-left" />
+      <img src="@/assets/pagination-arrow-left.svg" alt="left pagination arrow" />
     </li>
 
-    <!-- Visible Buttons Start -->
+    <li
+      :class="[
+        'v-pagination__btn',
+        'v-pagination__btn--arrow',
+        {
+          'v-pagination__btn--disabled': isInLastPage,
+        },
+      ]"
+      v-on="!isInLastPage ? { click: onClickNextPage } : {}"
+    >
+      <img src="@/assets/pagination-arrow-right.svg" alt="right pagination arrow" />
+    </li>
 
-    <li v-for="page in pages" :key="page.name">
+    <!-- Visible buttons start   -->
+    <li v-for="page in pages" :key="page.name" class="v-pagination__numbers">
       <button
         type="button"
         :disabled="page.isDisabled"
-        class="v-pagination__numbers"
+        class="v-pagination__number"
         :class="{ active: isPageActive(page.name) }"
         @click="onClickPage(page.name)"
       >
@@ -34,26 +52,19 @@
       </button>
     </li>
 
-    <!-- Visible Buttons End -->
+    <!-- Visible buttons end   -->
 
     <li
-      class="v-pagination__btn"
-      :class="{
-        'v-pagination__btn--disabled': isInLastPage,
-      }"
-      v-on="!isInLastPage ? { click: onClickNextPage } : {}"
-    >
-      <VIcon class="v-pagination__btn--icon" icon="chevron-right" />
-    </li>
-
-    <li
-      class="v-pagination__btn"
-      :class="{
-        'v-pagination__btn--disabled': isInLastPage,
-      }"
+      :class="[
+        'v-pagination__btn',
+        'v-pagination__btn--last',
+        {
+          'v-pagination__btn--disabled': isInLastPage,
+        },
+      ]"
       v-on="!isInLastPage ? { click: onClickLastPage } : {}"
     >
-      <VIcon class="v-pagination__btn--icon" icon="angle-double-right" />
+      Last
     </li>
   </ul>
 </template>
@@ -61,11 +72,8 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
 
-import VIcon from './VIcon.vue';
-
 export default defineComponent({
   name: 'VPagination',
-  components: { VIcon },
   props: {
     maxVisibleButtons: {
       type: Number,
@@ -169,52 +177,81 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import '../assets/styles/_fonts.scss';
+
 .v-pagination {
+  font-family: Inter, serif;
   list-style-type: none;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
-  margin: 2rem;
+  margin: 2rem 1.75rem 2rem 0;
   border-radius: 0.6rem;
   background: #ffffff;
 
-  &__numbers,
+  & > &__numbers {
+    margin-left: 1.25rem;
+  }
+
+  & > &__numbers ~ &__numbers {
+    margin-left: 1rem;
+  }
+
+  &__number,
   &__btn {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0.4rem;
     font-size: 1rem;
     cursor: pointer;
   }
 
-  &__numbers {
-    width: 1.625rem;
-    height: 1.625rem;
-    border-radius: 0.4rem;
-    background: transparent;
+  &__number {
+    background: none;
+    width: 1.25rem;
+    height: 1.25rem;
+    color: #181d3d;
     outline: none;
     border: none;
 
-    &:hover {
-      color: #23adad;
-    }
-
     &.active {
-      color: #ffffff;
-      background: #23adad;
+      background: #ebeefe;
       font-weight: 600;
-      border: 1px solid #23adad;
     }
   }
 
   &__btn {
-    color: #23adade1;
+    color: #636992;
+
+    &--arrow {
+      width: 1.75rem;
+      height: 1.75rem;
+
+      &:active {
+        background: #ebeefe;
+      }
+
+      &:nth-child(3) {
+        margin-left: 6px;
+      }
+    }
+
+    &--start {
+      margin-right: 2.25rem;
+    }
+
+    &--last {
+      margin-left: 2.25rem;
+    }
 
     &--disabled {
       cursor: not-allowed;
       color: #423e3e;
       opacity: 0.7;
+
+      &:active {
+        background: none;
+      }
     }
   }
 }
