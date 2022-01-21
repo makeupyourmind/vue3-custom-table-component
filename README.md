@@ -2,7 +2,7 @@
 
 ## SampleCode
 ````js
-import VTable from 'vue3-table-component';
+import { VTable } from 'vue3-table-component';
 ````
 
 ## Setup
