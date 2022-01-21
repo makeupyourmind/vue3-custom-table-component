@@ -2,8 +2,23 @@
 
 ## SampleCode
 ````js
-import VTable from '@makeupyourmind/vue3-table-component';
+import VTable from 'vue3-table-component';
 ````
+
+## Setup
+````
+$ npm install
+$ npm run serve
+````
+
+## Package update
+```
+$ npm run build-library
+
+check if version in package json has been changed.
+
+$ npm publish 
+```
 
 ### QuickStart
 <hr />

@@ -1,3 +1,3 @@
-import VTable from './components/VTable.vue';
+import VTableComponent from './components/VTable.vue';
 
-export default VTable;
+export const VTable = VTableComponent;
