@@ -9,7 +9,12 @@
   "keywords": [
     "vue",
     "vue3",
-    "table"
+    "custom-table",
+    "custom-table-component",
+    "table",
+    "table-component",
+    "vue3-table",
+    "vue3-table-component"
   ],
   "license": "MIT",
   "repository": {
